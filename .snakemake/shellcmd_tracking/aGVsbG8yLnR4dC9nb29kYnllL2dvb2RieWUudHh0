@@ -1,0 +1,5 @@
+
+        echo hello2.txt
+        echo testdir/input/hello2.txt
+        touch hello2.txt/goodbye/goodbye.txt
+        
