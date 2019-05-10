@@ -26,7 +26,7 @@ rule all:
         """
 
 rule make_goodbyes:
-    input: "testdir/input/{sample}"
+    input: "testdir/input/{sample}.txt"
     output: "testdir/{sample}/output/goodbye.txt"
     shell:
         """
