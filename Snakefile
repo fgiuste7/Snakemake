@@ -16,7 +16,7 @@ GOODBYES = expand("testdir/{sample}/output/goodbye.txt", sample = SAMPLES)
 #-------------------------------------------------------------------------------
 # Rules
 #-------------------------------------------------------------------------------
-localrules: all, make_goodbyes
+#localrules: all, make_goodbyes
 
 rule all:
     input: GOODBYES
