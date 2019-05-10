@@ -9,7 +9,7 @@ import glob, os
 # Config
 #-------------------------------------------------------------------------------
 # Obtain sample names from input directory contents:
-SAMPLES = [fname.split('/')[-1] for fname in glob.glob('./testdir/input/*')]
+SAMPLES = [fname.split('/')[-1].split('.txt')[0] for fname in glob.glob('./testdir/input/*')]
 GOODBYES = expand("{sample}/goodbye/goodbye.txt", sample = SAMPLES)
 
 
@@ -20,7 +20,6 @@ localrules: all, make_goodbyes
 
 rule all:
     input: GOODBYES
-    output: 
     shell:
         """
         echo "Hello World"
@@ -28,7 +27,7 @@ rule all:
 
 rule make_goodbyes:
     input: "testdir/input/{sample}"
-    output: "{sample}/goodbye/goodbye.txt"
+    output: "testdir/{sample}/output/goodbye.txt"
     shell:
         """
         echo {wildcards.sample}
