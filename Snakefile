@@ -22,6 +22,7 @@ rule all:
     input: GOODBYES
     shell:
         """
+        sleep 60
         echo "Hello World"
         """
 
