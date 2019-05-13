@@ -23,7 +23,7 @@ rule all:
     shell:
         """
         echo "Sleeping"
-        sleep 20
+        sleep 5
         echo "Hello World"
         """
 
@@ -34,6 +34,6 @@ rule make_goodbyes:
         """
         echo {wildcards.sample}
         echo {input}
-        sleep 20
+        sleep 15
         touch {output}
         """
