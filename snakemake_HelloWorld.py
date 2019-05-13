@@ -34,5 +34,6 @@ rule make_goodbyes:
         """
         echo {wildcards.sample}
         echo {input}
+        sleep 20
         touch {output}
         """
