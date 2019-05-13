@@ -29,7 +29,7 @@ rule all:
 
 rule make_goodbyes:
     input: "testdir/input/{sample}.txt"
-    output: "testdir/{sample}/output/goodbye.txt"
+    output: "testdir/output/{sample}/goodbye.txt"
     shell:
         """
         echo {wildcards.sample}
