@@ -16,14 +16,14 @@ GOODBYES = expand("testdir/output/{sample}/goodbye.txt", sample = SAMPLES)
 #-------------------------------------------------------------------------------
 # Rules
 #-------------------------------------------------------------------------------
-localrules: all, make_goodbyes
+#localrules: all, make_goodbyes
 
 rule all:
     input: GOODBYES[0:10]
     shell:
         """
         echo "Sleeping"
-        sleep 5
+        sleep 30
         echo "Hello World"
         """
 
@@ -37,7 +37,7 @@ rule make_goodbyes:
         """
         echo {wildcards.sample}
         echo {input}
-        sleep 1
+        sleep 60
         touch {output}
         """
 
