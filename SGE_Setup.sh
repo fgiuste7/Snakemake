@@ -16,7 +16,15 @@ dpkg -s <packagename>
 dpkg-query -l '<regex>'
 
 
+# Uninstall:
+sudo apt-get purge -y gridengine-master gridengine-qmon gridengine-client gridengine-exec
+sudo apt-get -y autoremove
+rm -r /var/spool/gridengine/ /var/lib/gridengine/ /usr/share/gridengine /usr/lib/gridengine /run/gridengine /etc/default/gridengine /etc/gridengine/
 
+ps -ef | grep sge_
+ps -ef | grep sge
+
+sudo apt update
 
 # SGE Commands: 
 List administrative hosts:

@@ -30,6 +30,9 @@ rule all:
 rule make_goodbyes:
     input: "testdir/input/{sample}.txt"
     output: "testdir/output/{sample}/goodbye.txt"
+    threads: 1
+    resources:
+        mem_gb = 5
     shell:
         """
         echo {wildcards.sample}
@@ -37,3 +40,6 @@ rule make_goodbyes:
         sleep 1
         touch {output}
         """
+
+# Run Snakemake:
+# nohup snakemake --cores 16 --resources mem_gb=23 --rerun-incomplete &
