@@ -19,7 +19,7 @@ GOODBYES = expand("testdir/output/{sample}/goodbye.txt", sample = SAMPLES)
 localrules: all, make_goodbyes
 
 rule all:
-    input: GOODBYES
+    input: GOODBYES[0:10]
     shell:
         """
         echo "Sleeping"
@@ -43,3 +43,5 @@ rule make_goodbyes:
 
 # Run Snakemake:
 # nohup snakemake --cores 16 --resources mem_gb=23 --rerun-incomplete &
+
+# snakemake --jobs 10 --cluster "sbatch "
