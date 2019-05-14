@@ -13,8 +13,7 @@ salt 'SM*' cmd.run 'apt-get install munge -y'
 # Copy munge key to nodes via ssh:
 salt 'SM*' cmd.run 'sudo cp /home/fgiuste/Slurm/munge.key /etc/munge/munge.key'
 # Delete universal copy:
-sudo rm /home/fgiuste/Slurm/munge.key
-
+sudo rm /home/fgiuste/Slurm
 #_ SLURM Setup _________________________________________#
 # Install SLURM on nodes:
 salt 'SM*' cmd.run 'apt install slurm-wlm -y'
@@ -27,16 +26,30 @@ sudo cp slurm.conf /etc/slurm-llnl/slurm.conf
 # Copy slurm.conf to final location (nodes)
 sudo salt 'SM*' cmd.run 'sudo cp /home/fgiuste/Slurm/slurm.conf /etc/slurm-llnl/slurm.conf'
 
-
+# Start munge:
+sudo systemctl enable munge
+sudo systemctl start munge
+sudo salt 'SM*' cmd.run 'sudo systemctl enable munge'
+sudo salt 'SM*' cmd.run 'sudo systemctl start munge'
+# Start Slurm Workload Manager:
 sudo systemctl enable slurmctld
 sudo systemctl start slurmctld
-sudo salt 'SM*' cmd.run 'sudo systemctl enable slurmctld && systemctl start slurmctld'
-sudo salt 'SM*' cmd.run 'sudo systemctl enable slurmd && systemctl start slurmd'
+# Start Slurm Compute Daemon:
+sudo salt 'SM*' cmd.run 'sudo systemctl enable slurmd'
+sudo salt 'SM*' cmd.run 'sudo systemctl start slurmd'
+
+# Stop daemons:
+sudo systemctl stop munge
+sudo systemctl stop slurmctld
+sudo salt 'SM*' cmd.run 'sudo systemctl stop slurmd'
+sudo salt 'SM*' cmd.run 'sudo systemctl stop munge'
 
 
 
-# Check log:
-sudo cat /var/log/slurm-llnl/slurmctld.log
+# Check slurm log:
+sudo tail -n30 /var/log/slurm-llnl/slurmctld.log
+# Check munge log:
+sudo tail -n30 /var/log/munge/munged.log
 
 # Sync system time:
 # https://www.tecmint.com/synchronize-time-with-ntp-in-linux/
