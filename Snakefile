@@ -44,4 +44,4 @@ rule make_goodbyes:
 # Run Snakemake:
 # nohup snakemake --cores 16 --resources mem_gb=23 --rerun-incomplete &
 
-# snakemake --jobs 100 --cluster "sbatch"
+# snakemake --jobs 20 --cluster "sbatch --cpus-per-task=1"

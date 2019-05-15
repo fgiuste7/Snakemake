@@ -43,12 +43,13 @@ sudo salt 'SM*' cmd.run 'sudo systemctl enable slurmd'
 sudo salt 'SM*' cmd.run 'sudo systemctl start slurmd'
 
 # Stop daemons:
-sudo systemctl stop munge
+#sudo systemctl stop munge
 sudo systemctl stop slurmctld
-sudo salt 'SM*' cmd.run 'sudo systemctl stop munge'
+#sudo salt 'SM*' cmd.run 'sudo systemctl stop munge'
 sudo salt 'SM*' cmd.run 'sudo systemctl stop slurmd'
 
-
+# Show all jobs:
+scontrol show job
 
 # Check slurm log:
 sudo tail -n30 /var/log/slurm-llnl/slurmctld.log
