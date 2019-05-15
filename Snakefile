@@ -44,4 +44,4 @@ rule make_goodbyes:
 # Run Snakemake:
 # nohup snakemake --cores 16 --resources mem_gb=23 --rerun-incomplete &
 
-# snakemake --jobs 10 --cluster "sbatch "
+# snakemake --jobs 100 --cluster "sbatch -o ${PWD}/testdir/log/slurm-%j.out"
