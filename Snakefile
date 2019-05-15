@@ -41,6 +41,9 @@ rule make_goodbyes:
         touch {output}
         """
 
+# TODO: create slurm job config file to specify ntasks=1,c=1, manually override for larger jobs
+## Also: slurm.conf: CR_CPU -> CR_CPU_Memory
+
 # Run Snakemake:
 # nohup snakemake --cores 16 --resources mem_gb=23 --rerun-incomplete &
 
