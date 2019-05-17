@@ -38,7 +38,7 @@ rule make_goodbyes:
         echo;
         touch {output};
         echo "before Docker";
-        docker run hello-world
+        docker run hello-world;
         echo "after Docker";
         """
 
@@ -48,4 +48,4 @@ rule make_goodbyes:
 # Run Snakemake:
 # nohup snakemake --cores 16 --resources mem_gb=23 --rerun-incomplete &
 
-# snakemake --jobs 256 --cluster "sbatch --ntasks=1 --cpus-per-task=1"
+# snakemake --jobs 256 --cluster "sbatch --ntasks=1 --cpus-per-task=16"
