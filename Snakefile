@@ -19,7 +19,7 @@ GOODBYES = expand("testdir/output/{sample}/goodbye.txt", sample = SAMPLES)
 #localrules: all, make_goodbyes
 
 rule all:
-    input: GOODBYES[0:5]
+    input: GOODBYES[0:8]
     shell:
         """
         echo "Final Hello World"
