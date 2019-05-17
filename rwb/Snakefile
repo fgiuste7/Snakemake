@@ -13,7 +13,7 @@ randomise_directory= "/mnt/gv0/randomise/"
 model_directory = "/mnt/gv0/model/"
 design_matrix = "%s/group_comparison.mat" % model_directory
 contrast_matrix = "%s/group_comparison.con" % model_directory
-npermutations = 5000
+npermutations = "5000"
 #ncontrasts = np.genfromtxt(contrasts, skip_header=4, comments='/').shape[0]
 
 
