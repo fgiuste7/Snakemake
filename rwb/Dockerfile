@@ -1,7 +1,7 @@
 # 5/17/2019 (FG)
 # Neuroimaging Image
 
-FROM continuumio/miniconda3:4.6.14
+FROM neurodebian:xenial-non-free
 
 #----------------------------
 # Install common dependencies
@@ -33,28 +33,6 @@ RUN if [ ! -f "$RWB_ENTRYPOINT" ]; then \
 ENTRYPOINT ["/home/startup.sh"]
 RUN sed -i '$isource /etc/fsl/fsl.sh' $RWB_ENTRYPOINT
 
-
-#----------------------------------------------------------
-# NeuroDebian Keys
-# http://neuro.debian.net/install_pkg.html?p=ants
-# Neurodebian:
-# https://github.com/neurodebian/dockerfiles/blob/88af27888a5aee76924c3b6840fc47f9cd8f63cb/dockerfiles/xenial-non-free/Dockerfile
-#----------------------------------------------------------
-RUN set -x \
-    && export GNUPGHOME="$(mktemp -d)" \
-    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys DD95CC430502E37EF840ACEEA5D32F012649A5A9 \
-    && gpg --export DD95CC430502E37EF840ACEEA5D32F012649A5A9 > /etc/apt/trusted.gpg.d/neurodebian.gpg \
-    && rm -rf "$GNUPGHOME" \
-    && apt-key list | grep neurodebian
-
-RUN { \
-    echo 'deb http://neuro.debian.net/debian stretch main'; \
-    echo 'deb http://neuro.debian.net/debian data main'; \
-    echo '#deb-src http://neuro.debian.net/debian-devel stretch main'; \
-} > /etc/apt/sources.list.d/neurodebian.sources.list
-
-RUN sed -i -e 's,main *$,main contrib non-free,g' /etc/apt/sources.list.d/neurodebian.sources.list; grep -q 'deb .* multiverse$' /etc/apt/sources.list || sed -i -e 's,universe *$,universe multiverse,g' /etc/apt/sources.list
-
 #---------------------
 # NeuroDebian Packages
 #---------------------
@@ -78,6 +56,24 @@ RUN apt-get update -qq \
                                                      graphviz \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
+#---------------------------
+# Install Miniconda3: 4.6.14
+#---------------------------
+USER neuro
+
+ENV CONDA_DIR=/opt/conda \
+    PATH=/opt/conda/bin:$PATH
+RUN echo "Downloading Miniconda installer ..." \
+    && miniconda_installer=/tmp/miniconda.sh \
+    && curl -sSL --retry 5 -o $miniconda_installer https://repo.continuum.io/miniconda/Miniconda3-4.6.14-Linux-x86_64.sh \
+    && /bin/bash $miniconda_installer -b -p $CONDA_DIR \
+    && rm -f $miniconda_installer \
+    && conda config --system --prepend channels conda-forge \
+    && conda config --system --set auto_update_conda false \
+    && conda config --system --set show_channel_urls true \
+    && conda clean -tipsy && sync
 
 
 #-----------------------
