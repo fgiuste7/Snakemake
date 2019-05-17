@@ -65,6 +65,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -qq \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+
 #--------------
 # Misc Packages
 #--------------
@@ -77,6 +78,18 @@ RUN apt-get update -qq \
                                                      graphviz \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
+#-----------------------
+# Create new user: neuro
+#-----------------------
+RUN useradd --no-user-group --create-home --shell /bin/bash neuro
+USER neuro
+
+ENV PROFILE='/home/neuro/.profile'
+RUN echo "$isource /etc/fsl/fsl.sh" >> $PROFILE
+RUN echo "alias ls='ls -lha --color=auto' " >> $PROFILE
+RUN echo "alias rm='rm -i' " >> $PROFILE
 
 
 #---------------------------
@@ -96,17 +109,6 @@ RUN echo "Downloading Miniconda installer ..." \
     && conda config --system --set show_channel_urls true \
     && conda clean -tipsy && sync
 
-
-#-----------------------
-# Create new user: neuro
-#-----------------------
-RUN useradd --no-user-group --create-home --shell /bin/bash neuro
-USER neuro
-
-ENV PROFILE='/home/neuro/.profile'
-RUN echo "$isource /etc/fsl/fsl.sh" >> $PROFILE
-RUN echo "alias ls='ls -lha --color=auto' " >> $PROFILE
-RUN echo "alias rm='rm -i' " >> $PROFILE
 
 #--------------
 # Conda Install
