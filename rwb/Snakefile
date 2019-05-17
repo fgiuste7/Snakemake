@@ -34,7 +34,11 @@ rule all:
 
 rule randomise:
     input: 
-        nifti= nifti_directory+"{sample}"
+        nifti= nifti_directory+"{sample}",
+        odir= output_directory,
+        dmat= design_matrix,
+        cmat= contrast_matrix,
+        nperm= npermutations
     output: randomise_directory+"{sample}"
     threads: 1
     resources:
@@ -42,11 +46,11 @@ rule randomise:
     shell:
         """
         echo {input[nifti]};
-        echo {output_directory};
-        echo {design_matrix};
-        echo {contrast_matrix};
-        echo {npermutations};
-        echo "randomise -i {nifti} -o {output_directory} -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout" > {output};
+        echo {input[odir]};
+        echo {input[dmat]};
+        echo {input[cmat]};
+        echo {input[nperm]};
+        echo "randomise -i {input[nifti]} -o {input[odir]} -d {input[dmat]} -t {input[cmat]} -n {input[nperm]} -R -N -x --permout" > {output};
         """
 
 rule mergetestTs:
