@@ -52,9 +52,9 @@ RUN set -x \
     && apt-key list | grep neurodebian
 
 RUN { \
-    echo 'deb http://neuro.debian.net/debian xenial main'; \
+    echo 'deb http://neuro.debian.net/debian stretch main'; \
     echo 'deb http://neuro.debian.net/debian data main'; \
-    echo '#deb-src http://neuro.debian.net/debian-devel xenial main'; \
+    echo '#deb-src http://neuro.debian.net/debian-devel stretch main'; \
 } > /etc/apt/sources.list.d/neurodebian.sources.list
 
 RUN sed -i -e 's,main *$,main contrib non-free,g' /etc/apt/sources.list.d/neurodebian.sources.list; grep -q 'deb .* multiverse$' /etc/apt/sources.list || sed -i -e 's,universe *$,universe multiverse,g' /etc/apt/sources.list
