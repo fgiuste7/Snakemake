@@ -22,7 +22,7 @@ npermutations = "5000"
 #-------------------------------------------------------------------------------
 # SAMPLES: Folder name containing niftis for a row (128 Sources):
 SAMPLES = [fname.split('/')[-1] for fname in glob.glob('%s/*'%nifti_directory)]
-RANDOMISE = expand("%s/{sample}"%randomise_directory, sample = SAMPLES)
+RANDOMISE = expand("%s/{sample}_done"%randomise_directory, sample = SAMPLES)
 
 
 #-------------------------------------------------------------------------------
@@ -36,16 +36,16 @@ rule all:
         """
 
 rule randomise:
-    input: nifti= nifti_directory+"{sample}",
-    output: "/mnt/gv0/randomise/{sample}"
+    input: niftidir= nifti_directory+"{sample}"
+    output: randomise_directory+"{sample}_done"
     shell:
         """
-        echo {input[nifti]};
-        echo {randomise_directory};
-        echo {design_matrix};
-        echo {contrast_matrix};
-        echo {npermutations};
-        echo "randomise -i {input[nifti]} -o {randomise_directory} -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout" > {output};
+        for nii in input[niftidir]
+        do
+            echo "randomise -i $nii -o {randomise_directory} -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout" >> {randomise_directory}/{wildcards.sample};
+        done
+
+        mv {randomise_directory}/{wildcards.sample} {output}
         """
 
 # TODO: create slurm job config file to specify ntasks=1,c=1, manually override for larger jobs
