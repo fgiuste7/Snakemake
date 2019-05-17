@@ -41,7 +41,7 @@ rule randomise:
         mem_gb = 5
     shell:
         """
-        echo {nifti};
+        echo {input[nifti]};
         echo {output_directory};
         echo {design_matrix};
         echo {contrast_matrix};
