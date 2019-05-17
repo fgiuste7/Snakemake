@@ -36,8 +36,7 @@ rule all:
         """
 
 rule randomise:
-    input: 
-        nifti= nifti_directory+"{sample}",
+    input: nifti= nifti_directory+"{sample}",
         odir= randomise_directory,
         dmat= design_matrix,
         cmat= contrast_matrix,
