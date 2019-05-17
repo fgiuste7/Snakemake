@@ -1,7 +1,7 @@
 # 5/17/2019 (FG)
 # Neuroimaging Image
 
-FROM continuum/miniconda3:4.6.14
+FROM continuumio/miniconda3:4.6.14
 
 #----------------------------
 # Install common dependencies
