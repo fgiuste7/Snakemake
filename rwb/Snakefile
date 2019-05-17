@@ -30,7 +30,10 @@ RANDOMISE = expand("%s/{sample}"%randomise_directory, sample = SAMPLES)
 #-------------------------------------------------------------------------------
 rule all:
     input: RANDOMISE[0:8]
-    message: "Final samples: {}".format(RANDOMISE[0:8])
+    shell:
+        """
+        echo "Finito";
+        """
 
 rule randomise:
     input: 
