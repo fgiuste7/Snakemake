@@ -35,8 +35,7 @@ rule make_goodbyes:
         """
         #echo {wildcards.sample}
         echo {input}
-        #sleep 30
-        #echo
+        sleep 20
         whoami
         echo $USER
         echo
