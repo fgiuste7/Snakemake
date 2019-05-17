@@ -142,7 +142,7 @@ RUN conda install -y pytest \
                                   dask==0.18.1 \
     && sync
 
-RUN bash -c "rm -rf /opt/conda/pkgs/*"
+RUN conda build purge-all
 
 #-----------------------------------------
 # Set Directory Structure and Permissions:
