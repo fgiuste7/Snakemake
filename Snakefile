@@ -22,9 +22,7 @@ rule all:
     input: GOODBYES[0:5]
     shell:
         """
-        echo "Sleeping"
-        sleep 30
-        echo "Hello World"
+        echo "Final Hello World"
         """
 
 rule make_goodbyes:
@@ -37,7 +35,7 @@ rule make_goodbyes:
         """
         echo {wildcards.sample}
         echo {input}
-        sleep 60
+        sleep 30
         docker run hello-world
         touch {output}
         """
