@@ -37,8 +37,8 @@ rule make_goodbyes:
         echo {input}
         sleep 20
         echo
-        docker run hello-world
         touch {output}
+        docker run hello-world
         """
 
 # TODO: create slurm job config file to specify ntasks=1,c=1, manually override for larger jobs

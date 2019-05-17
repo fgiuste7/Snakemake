@@ -62,8 +62,11 @@ sudo scontrol reconfigure
 # Get node Status:Drain explanation:
 sudo sinfo -R
 
-# Remove node from Status:Drain:
+# Remove Node from Status:Drain:
 sudo scontrol update nodename=SM4 state=resume
+
+# Remove Node from Cluster: (needs reason)
+sudo scontrol update nodename=SM1 state=down reason="Does not recognize User:fgiuste"
 
 # Sync system time:
 # https://www.tecmint.com/synchronize-time-with-ntp-in-linux/
