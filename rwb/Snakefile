@@ -1,0 +1,83 @@
+# Felipe Giuste
+# 5/17/2019
+# Snakefile
+# Randomise Whole Brain Nifti Analysis
+
+import glob, os
+
+#-------------------------------------------------------------------------------
+# Constants
+#-------------------------------------------------------------------------------
+nifti_directory= "/mnt/gv0/FoxNiftis/"
+randomise_directory= "/mnt/gv0/randomise/"
+model_directory = "/mnt/gv0/model/"
+design_matrix = "%s/group_comparison.mat" % model_directory
+contrast_matrix = "%s/group_comparison.con" % model_directory
+npermutations = 5000
+#ncontrasts = np.genfromtxt(contrasts, skip_header=4, comments='/').shape[0]
+
+
+#-------------------------------------------------------------------------------
+# Config
+#-------------------------------------------------------------------------------
+# SAMPLES: Folder name containing niftis for a row (128 Sources):
+SAMPLES = [fname.split('/')[-1] for fname in glob.glob('%s/*'%nifti_directory)]
+RANDOMISE = expand("%s/{sample}"%randomise_directory, sample = SAMPLES)
+
+
+#-------------------------------------------------------------------------------
+# Rules
+#-------------------------------------------------------------------------------
+rule all:
+    input: RANDOMISE[0:8]
+    message: "Final samples: {}".format(RANDOMISE[0:8])
+
+rule randomise:
+    input: 
+        nifti= nifti_directory+"{sample}"
+    output: randomise_directory+"{sample}"
+    threads: 1
+    resources:
+        mem_gb = 5
+    shell:
+    """
+    echo {nifti};
+    echo {output_directory};
+    echo {design_matrix};
+    echo {contrast_matrix};
+    echo {npermutations};
+    echo "randomise -i {nifti} -o {output_directory} -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout" > {output};
+    """
+
+rule mergetestTs:
+    input: 
+    output: 
+    shell:
+        """
+
+        """
+
+rule make_goodbyes:
+    input: "testdir/input/{sample}.txt"
+    output: "testdir/output/{sample}/goodbye.txt"
+    threads: 1
+    resources:
+        mem_gb = 5
+    shell:
+        """
+        echo {input};
+        sleep 20;
+        echo;
+        touch {output};
+        echo "before Docker";
+        docker run hello-world;
+        echo "after Docker";
+        """
+
+# TODO: create slurm job config file to specify ntasks=1,c=1, manually override for larger jobs
+## Also: slurm.conf: CR_CPU -> CR_CPU_Memory
+
+# Run Snakemake:
+# nohup snakemake --cores 16 --resources mem_gb=23 --rerun-incomplete &
+
+# snakemake --jobs 256 --cluster "sbatch --ntasks=1 --cpus-per-task=16"
