@@ -1,7 +1,7 @@
 # 5/17/2019 (FG)
 # Neuroimaging Image
 
-FROM python:3.7.3
+FROM continuum/miniconda3:4.6.14
 
 #----------------------------
 # Install common dependencies
@@ -40,10 +40,6 @@ RUN sed -i '$isource /etc/fsl/fsl.sh' $RWB_ENTRYPOINT
 # Neurodebian:
 # https://github.com/neurodebian/dockerfiles/blob/88af27888a5aee76924c3b6840fc47f9cd8f63cb/dockerfiles/xenial-non-free/Dockerfile
 #----------------------------------------------------------
-# RUN wget -O- http://neuro.debian.net/lists/xenial.us-tn.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list
-# RUN apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9
-# https://bugs.debian.org/830696 (apt uses gpgv by default in newer releases, rather than gpg)
-
 RUN set -x \
     && export GNUPGHOME="$(mktemp -d)" \
     && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys DD95CC430502E37EF840ACEEA5D32F012649A5A9 \
@@ -87,23 +83,6 @@ ENV PROFILE='/home/neuro/.profile'
 RUN echo "$isource /etc/fsl/fsl.sh" >> $PROFILE
 RUN echo "alias ls='ls -lha --color=auto' " >> $PROFILE
 RUN echo "alias rm='rm -i' " >> $PROFILE
-
-#---------------------------
-# Install Miniconda3: 4.3.31
-#---------------------------
-USER neuro
-
-ENV CONDA_DIR=/opt/conda \
-    PATH=/opt/conda/bin:$PATH
-RUN echo "Downloading Miniconda installer ..." \
-    && miniconda_installer=/tmp/miniconda.sh \
-    && curl -sSL --retry 5 -o $miniconda_installer https://repo.continuum.io/miniconda/Miniconda3-4.3.31-Linux-x86_64.sh \
-    && /bin/bash $miniconda_installer -b -p $CONDA_DIR \
-    && rm -f $miniconda_installer \
-    && conda config --system --prepend channels conda-forge \
-    && conda config --system --set auto_update_conda false \
-    && conda config --system --set show_channel_urls true \
-    && conda clean -tipsy && sync
 
 #-------------------------
 # Conda Install
