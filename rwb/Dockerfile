@@ -36,7 +36,7 @@ RUN sed -i '$isource /etc/fsl/fsl.sh' $RWB_ENTRYPOINT
 #---------------------
 # NeuroDebian Packages
 #---------------------
-RUN apt-get update -qq \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update -qq \
     && apt-get install -y -q --no-install-recommends convert3d \
                                                      ants \
                                                      fsl \
