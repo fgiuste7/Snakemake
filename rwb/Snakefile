@@ -40,10 +40,7 @@ rule randomise:
         cmat= contrast_matrix,
         nperm= npermutations
     output: 
-        "%s/{sample}"% randomise_directory
-    threads: 1
-    resources:
-        mem_gb = 5
+        out= "%s/{sample}"% randomise_directory
     shell:
         """
         echo {input[nifti]};
@@ -51,7 +48,7 @@ rule randomise:
         echo {input[dmat]};
         echo {input[cmat]};
         echo {input[nperm]};
-        echo "randomise -i {input[nifti]} -o {randomise_directory} -d {input[dmat]} -t {input[cmat]} -n {input[nperm]} -R -N -x --permout" > {output};
+        echo "randomise -i {input[nifti]} -o {randomise_directory} -d {input[dmat]} -t {input[cmat]} -n {input[nperm]} -R -N -x --permout" > {output[out]};
         """
 
 rule mergetestTs:
@@ -59,7 +56,6 @@ rule mergetestTs:
     output: 
     shell:
         """
-
         """
 
 rule make_goodbyes:
