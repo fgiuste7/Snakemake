@@ -39,7 +39,8 @@ rule randomise:
         dmat= design_matrix,
         cmat= contrast_matrix,
         nperm= npermutations
-    output: randomise_directory+"{sample}"
+    output: 
+        randomise_directory+"{sample}"
     threads: 1
     resources:
         mem_gb = 5
