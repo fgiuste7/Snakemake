@@ -110,9 +110,9 @@ RUN echo "Downloading Miniconda installer ..." \
     && conda clean -tipsy && sync
 
 
-#--------------
-# Conda Install
-#--------------
+#------------------
+# Conda/Pip Install
+#------------------
 USER neuro
 
 RUN conda install -y pytest \
@@ -131,15 +131,16 @@ RUN conda install -y pytest \
                      pydot \
                      h5py \
                      pytables \
-                     zarr \
-    && sync && conda clean -tipsy && sync \
-    && pip install --no-cache-dir https://github.com/nipy/nipype/tarball/master \
-                                  https://github.com/INCF/pybids/tarball/master \
-                                  nilearn \
-                                  datalad[full] \
-                                  nipy \
-                                  duecredit \
-                                  dask==0.18.1 \
+                     zarr
+
+RUN pip install --upgrade setuptools
+RUN pip install --no-cache-dir https://github.com/nipy/nipype/tarball/master \
+                                https://github.com/INCF/pybids/tarball/master \
+                                nilearn \
+                                datalad[full] \
+                                nipy \
+                                duecredit \
+                                dask==0.18.1 \
     && sync
 
 RUN conda build purge-all
