@@ -1,16 +1,7 @@
-# 8/27/2018 (FG)
-# rwb
+# 5/17/2019 (FG)
+# Neuroimaging Image
 
-# To Build Docker Image:
-# cd ${Dockerfile_Directory}
-# docker build --tag ${image_name} .
-
-#----------------------------------------------------------
-# Install phusion/baseimage:0.10.2
-# https://github.com/phusion/baseimage-docker
-# From Ubuntu 16.04.5 LTS
-#----------------------------------------------------------
-FROM Python3
+FROM python:3.7.3
 
 #----------------------------
 # Install common dependencies
