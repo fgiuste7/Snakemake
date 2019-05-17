@@ -40,7 +40,7 @@ rule randomise:
     output: randomise_directory+"{sample}_done"
     shell:
         """
-        for nii in input[niftidir]
+        for nii in {input[niftidir]}
         do
             echo "randomise -i $nii -o {randomise_directory} -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout" >> {randomise_directory}/{wildcards.sample};
         done
