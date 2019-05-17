@@ -36,6 +36,10 @@ rule make_goodbyes:
         echo {wildcards.sample}
         echo {input}
         sleep 30
+        echo
+        whoami
+        echo $USER
+        echo
         docker run hello-world
         touch {output}
         """
