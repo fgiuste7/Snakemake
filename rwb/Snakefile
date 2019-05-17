@@ -40,7 +40,7 @@ rule randomise:
         cmat= contrast_matrix,
         nperm= npermutations
     output: 
-        randomise_directory+"{sample}"
+        "%s/{sample}"% randomise_directory
     threads: 1
     resources:
         mem_gb = 5
