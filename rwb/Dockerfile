@@ -1,7 +1,7 @@
 # 5/17/2019 (FG)
 # Neuroimaging Image
 
-FROM neurodebian:xenial-non-free
+FROM ubuntu:18.04
 
 #----------------------------
 # Install common dependencies
@@ -16,6 +16,27 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
     && chmod 777 /opt && chmod a+s /opt \
     && chmod -R 777 /home && chmod a+s /home \
     && apt-get update -qq
+
+#----------------------------------------------------------
+# NeuroDebian Keys
+# http://neuro.debian.net/install_pkg.html?p=ants
+# Neurodebian:
+# https://github.com/neurodebian/dockerfiles/blob/88af27888a5aee76924c3b6840fc47f9cd8f63cb/dockerfiles/xenial-non-free/Dockerfile
+#----------------------------------------------------------
+RUN set -x \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys DD95CC430502E37EF840ACEEA5D32F012649A5A9 \
+    && gpg --export DD95CC430502E37EF840ACEEA5D32F012649A5A9 > /etc/apt/trusted.gpg.d/neurodebian.gpg \
+    && rm -rf "$GNUPGHOME" \
+    && apt-key list | grep neurodebian
+
+RUN { \
+    echo 'deb http://neuro.debian.net/debian bionic main'; \
+    echo 'deb http://neuro.debian.net/debian data main'; \
+    echo '#deb-src http://neuro.debian.net/debian-devel bionic main'; \
+} > /etc/apt/sources.list.d/neurodebian.sources.list
+
+RUN sed -i -e 's,main *$,main contrib non-free,g' /etc/apt/sources.list.d/neurodebian.sources.list; grep -q 'deb .* multiverse$' /etc/apt/sources.list || sed -i -e 's,universe *$,universe multiverse,g' /etc/apt/sources.list
 
 
 #---------------------------
