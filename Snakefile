@@ -33,10 +33,10 @@ rule make_goodbyes:
         mem_gb = 5
     shell:
         """
-        echo {wildcards.sample}
+        #echo {wildcards.sample}
         echo {input}
-        sleep 30
-        echo
+        #sleep 30
+        #echo
         whoami
         echo $USER
         echo
