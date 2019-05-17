@@ -35,7 +35,7 @@ rule all:
 rule randomise:
     input: 
         nifti= nifti_directory+"{sample}",
-        odir= output_directory,
+        odir= randomise_directory,
         dmat= design_matrix,
         cmat= contrast_matrix,
         nperm= npermutations
@@ -50,7 +50,7 @@ rule randomise:
         echo {input[dmat]};
         echo {input[cmat]};
         echo {input[nperm]};
-        echo "randomise -i {input[nifti]} -o {input[odir]} -d {input[dmat]} -t {input[cmat]} -n {input[nperm]} -R -N -x --permout" > {output};
+        echo "randomise -i {input[nifti]} -o {randomise_directory} -d {input[dmat]} -t {input[cmat]} -n {input[nperm]} -R -N -x --permout" > {output};
         """
 
 rule mergetestTs:
