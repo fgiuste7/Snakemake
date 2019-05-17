@@ -39,8 +39,7 @@ rule randomise:
         dmat= design_matrix,
         cmat= contrast_matrix,
         nperm= npermutations
-    output: 
-        out= "%s/{sample}"% randomise_directory
+    output: "/mnt/gv0/randomise/{sample}"
     shell:
         """
         echo {input[nifti]};
@@ -48,7 +47,7 @@ rule randomise:
         echo {input[dmat]};
         echo {input[cmat]};
         echo {input[nperm]};
-        echo "randomise -i {input[nifti]} -o {randomise_directory} -d {input[dmat]} -t {input[cmat]} -n {input[nperm]} -R -N -x --permout" > {output[out]};
+        echo "randomise -i {input[nifti]} -o {randomise_directory} -d {input[dmat]} -t {input[cmat]} -n {input[nperm]} -R -N -x --permout" > {output};
         """
 
 rule mergetestTs:
