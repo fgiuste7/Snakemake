@@ -63,7 +63,14 @@ RUN apt-get update -qq \
                                                      ants \
                                                      fsl \
                                                      fsl-atlases \
-                                                     tree \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+#--------------
+# Misc Packages
+#--------------
+RUN apt-get update -qq \
+    && apt-get install -y -q --no-install-recommends tree \
                                                      vim \
                                                      emacs-nox \
                                                      nano \
@@ -84,9 +91,9 @@ RUN echo "$isource /etc/fsl/fsl.sh" >> $PROFILE
 RUN echo "alias ls='ls -lha --color=auto' " >> $PROFILE
 RUN echo "alias rm='rm -i' " >> $PROFILE
 
-#-------------------------
+#--------------
 # Conda Install
-#-------------------------
+#--------------
 USER neuro
 
 RUN conda install -y pytest \
