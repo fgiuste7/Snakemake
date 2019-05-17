@@ -19,7 +19,7 @@ GOODBYES = expand("testdir/output/{sample}/goodbye.txt", sample = SAMPLES)
 #localrules: all, make_goodbyes
 
 rule all:
-    input: GOODBYES[0:100]
+    input: GOODBYES[0:5]
     shell:
         """
         echo "Sleeping"
@@ -38,6 +38,7 @@ rule make_goodbyes:
         echo {wildcards.sample}
         echo {input}
         sleep 60
+        docker run hello-world
         touch {output}
         """
 
