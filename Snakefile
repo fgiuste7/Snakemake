@@ -33,12 +33,13 @@ rule make_goodbyes:
         mem_gb = 5
     shell:
         """
-        #echo {wildcards.sample}
-        echo {input}
-        sleep 20
-        echo
-        touch {output}
+        echo {input};
+        sleep 20;
+        echo;
+        touch {output};
+        echo "before Docker";
         docker run hello-world
+        echo "after Docker";
         """
 
 # TODO: create slurm job config file to specify ntasks=1,c=1, manually override for larger jobs
