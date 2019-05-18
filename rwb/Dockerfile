@@ -134,17 +134,17 @@ RUN conda install -y pytest \
                      zarr \
     && sync
 
-RUN conda build purge-all
-
-RUN pip install --upgrade setuptools
-RUN conda install https://github.com/nipy/nipype/tarball/master \
-                                https://github.com/INCF/pybids/tarball/master \
-                                nilearn \
-                                datalad[full] \
-                                nipy \
-                                duecredit \
-                                dask==0.18.1 \
+RUN conda config --add channels conda-forge 
+RUN conda install   https://github.com/nipy/nipype/tarball/master \
+                    https://github.com/INCF/pybids/tarball/master \
+                    nilearn \
+                    datalad[full] \
+                    nipy \
+                    duecredit \
+                    dask==0.18.1 \
     && sync
+    
+RUN conda build purge-all
 
 
 #-----------------------------------------
