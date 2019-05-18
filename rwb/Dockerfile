@@ -113,7 +113,7 @@ RUN echo "Downloading Miniconda installer ..." \
 #------------------
 # Conda/Pip Install
 #------------------
-USER neuro
+USER root
 
 RUN conda install -y pytest \
                      traits \
@@ -134,7 +134,7 @@ RUN conda install -y pytest \
                      zarr
 
 RUN pip install --upgrade setuptools
-RUN pip install --no-cache-dir https://github.com/nipy/nipype/tarball/master \
+RUN pip install --no-cache-dir  https://github.com/nipy/nipype/tarball/master \
                                 https://github.com/INCF/pybids/tarball/master \
                                 nilearn \
                                 datalad[full] \
