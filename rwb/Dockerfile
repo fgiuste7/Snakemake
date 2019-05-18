@@ -141,10 +141,10 @@ RUN conda install   https://github.com/nipy/nipype/tarball/master \
                     datalad[full] \
                     nipy \
                     duecredit \
-                    dask==0.18.1 \
+                    dask=0.18.1 \
     && sync
     
-RUN conda build purge-all
+RUN conda clean --all
 
 
 #-----------------------------------------
