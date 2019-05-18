@@ -131,10 +131,13 @@ RUN conda install -y pytest \
                      pydot \
                      h5py \
                      pytables \
-                     zarr
+                     zarr \
+    && sync
 
-RUN pip3 install --upgrade setuptools
-RUN pip3 install --no-cache-dir  https://github.com/nipy/nipype/tarball/master \
+RUN conda build purge-all
+
+RUN pip install --upgrade setuptools
+RUN conda install https://github.com/nipy/nipype/tarball/master \
                                 https://github.com/INCF/pybids/tarball/master \
                                 nilearn \
                                 datalad[full] \
@@ -143,7 +146,6 @@ RUN pip3 install --no-cache-dir  https://github.com/nipy/nipype/tarball/master \
                                 dask==0.18.1 \
     && sync
 
-RUN conda build purge-all
 
 #-----------------------------------------
 # Set Directory Structure and Permissions:
