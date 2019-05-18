@@ -134,8 +134,8 @@ RUN conda install -y pytest \
     && sync
 
 RUN conda config --add channels conda-forge 
+RUN conda install -c aramislab pybids
 RUN conda install   nipype \
-                    pybids \
                     nilearn \
                     datalad[full] \
                     nipy \
