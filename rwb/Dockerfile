@@ -50,7 +50,6 @@ RUN if [ ! -f "$RWB_ENTRYPOINT" ]; then \
     && echo 'if [ -z "$*" ]; then /usr/bin/env bash; else $*; fi' >> $RWB_ENTRYPOINT; \
     fi
 
-
 ENTRYPOINT ["/home/startup.sh"]
 RUN sed -i '$isource /etc/fsl/fsl.sh' $RWB_ENTRYPOINT
 
@@ -135,12 +134,11 @@ RUN conda install -y pytest \
     && sync
 
 RUN conda config --add channels conda-forge 
-RUN conda install   https://github.com/nipy/nipype/tarball/master \
-                    https://github.com/INCF/pybids/tarball/master \
+RUN conda install   nipype \
+                    pybids \
                     nilearn \
                     datalad[full] \
                     nipy \
-                    duecredit \
                     dask=0.18.1 \
     && sync
     
