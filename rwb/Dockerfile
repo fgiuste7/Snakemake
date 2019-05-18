@@ -107,7 +107,7 @@ RUN echo "Downloading Miniconda installer ..." \
     && conda config --system --prepend channels conda-forge \
     && conda config --system --set auto_update_conda false \
     && conda config --system --set show_channel_urls true \
-    && conda clean -tipsy && sync
+    && sync
 
 
 #------------------
@@ -133,8 +133,8 @@ RUN conda install -y pytest \
                      pytables \
                      zarr
 
-RUN pip install --upgrade setuptools
-RUN pip install --no-cache-dir  https://github.com/nipy/nipype/tarball/master \
+RUN pip3 install --upgrade setuptools
+RUN pip3 install --no-cache-dir  https://github.com/nipy/nipype/tarball/master \
                                 https://github.com/INCF/pybids/tarball/master \
                                 nilearn \
                                 datalad[full] \
