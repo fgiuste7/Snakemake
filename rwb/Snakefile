@@ -22,7 +22,7 @@ npermutations = "5000"
 #-------------------------------------------------------------------------------
 # SAMPLES: Folder name containing niftis for a row (128 Sources):
 SAMPLES = [fname.split('/')[-1] for fname in glob.glob('%s/*'%nifti_directory)]
-RANDOMISE = expand("%s/{sample}_done"%randomise_directory, sample = SAMPLES)
+RANDOMISE = expand(randomise_directory+"{sample}_done", sample = SAMPLES)
 
 #-------------------------------------------------------------------------------
 # Rules
@@ -57,3 +57,4 @@ rule randomise:
 # Ex: randomise -i /mnt/gv0/FoxNiftis//1024-1151/1024-1151_100096-100223.nii.gz -o /mnt/gv0/randomise/ -d /mnt/gv0/model//group_comparison.mat -t /mnt/gv0/model//group_comparison.con -n 5000 -R -N -x --permout
 
 # snakemake --jobs 256 --cluster "sbatch --ntasks=1 --cpus-per-task=16"
+docker rm $(docker ps -f "status=exited" -q); docker rmi $(docker images -f "dangling=true" -q)
