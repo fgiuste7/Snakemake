@@ -23,7 +23,7 @@ npermutations = "5000"
 # SAMPLES: Folder name containing niftis for a row (128 Sources):
 SAMPLES = [fname.split('/')[-1] for fname in glob.glob('%s/*'%nifti_directory)]
 RANDOMISE = expand("%s/{sample}_done"%randomise_directory, sample = SAMPLES)
-
+print(RANDOMISE)
 
 #-------------------------------------------------------------------------------
 # Rules
@@ -42,7 +42,9 @@ rule randomise:
         """
         for nii in `ls {input[niftidir]}`
         do
-            echo "randomise -i {input[niftidir]}/$nii -o {randomise_directory} -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout" >> {randomise_directory}/{wildcards.sample};
+            run_randomise="randomise -i {input[niftidir]}/$nii -o {randomise_directory} -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout"
+            docker run fgiuste/neuroimaging echo $run_randomise  > {randomise_directory}/{wildcards.sample}/$nii;
+            #echo run_randomise >> {randomise_directory}/{wildcards.sample};
         done
 
         mv {randomise_directory}/{wildcards.sample} {output}
