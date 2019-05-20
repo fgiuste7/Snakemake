@@ -28,7 +28,7 @@ RANDOMISE = expand(randomise_directory+"{sample}_done", sample = SAMPLES)
 # Rules
 #-------------------------------------------------------------------------------
 rule all:
-    input: RANDOMISE[0:8]
+    input: RANDOMISE
     shell:
         """
         echo "Finito";
