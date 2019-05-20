@@ -23,7 +23,6 @@ npermutations = "5000"
 # SAMPLES: Folder name containing niftis for a row (128 Sources):
 SAMPLES = [fname.split('/')[-1] for fname in glob.glob('%s/*'%nifti_directory)]
 RANDOMISE = expand("%s/{sample}_done"%randomise_directory, sample = SAMPLES)
-print(RANDOMISE)
 
 #-------------------------------------------------------------------------------
 # Rules
@@ -52,8 +51,5 @@ rule randomise:
 
 # TODO: create slurm job config file to specify ntasks=1,c=1, manually override for larger jobs
 ## Also: slurm.conf: CR_CPU -> CR_CPU_Memory
-
-# Run Snakemake:
-# nohup snakemake --cores 16 --resources mem_gb=23 --rerun-incomplete &
 
 # snakemake --jobs 256 --cluster "sbatch --ntasks=1 --cpus-per-task=16"
