@@ -48,9 +48,6 @@ sudo systemctl stop slurmctld
 #sudo salt 'SM*' cmd.run 'sudo systemctl stop munge'
 sudo salt 'SM*' cmd.run 'sudo systemctl stop slurmd'
 
-# Show all jobs:
-scontrol show job
-
 # Check slurm log:
 sudo tail -n30 /var/log/slurm-llnl/slurmctld.log
 # Check munge log:
@@ -77,3 +74,18 @@ timedatectl status
 
 sudo cp /etc/systemd/timesyncd.conf /home/fgiuste/Slurm/timesyncd.conf
 sudo salt 'SM*' cmd.run 'cp /home/fgiuste/Slurm/timesyncd.conf /etc/systemd/timesyncd.conf'
+
+
+#_ SLURM Administration _________________________________________#
+# Show all jobs:
+scontrol show job
+
+# Cancel job: scancel
+# https://slurm.schedmd.com/scancel.html
+scancel --ctld ${Job_ID}
+
+# Estimate time to run:
+sbatch --test-only myscript.sh
+
+# Get Job info after completion:
+sacct -j ${Job_ID} --format=JobID,JobName,MaxRSS,Elapsed
