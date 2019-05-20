@@ -44,7 +44,7 @@ rule randomise:
         mkdir -p {randomise_directory}/{wildcards.sample};
         for nii in `ls {input[niftidir]}`
         do
-            run_randomise="randomise -i {input[niftidir]}/$nii -o {randomise_directory} -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout";
+            run_randomise="randomise -i {input[niftidir]}/$nii -o {randomise_directory}/{wildcards.sample}/$nii/$nii -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout";
             docker exec neuroimaging_{wildcards.sample} echo $run_randomise > {randomise_directory}/{wildcards.sample}/$nii;
         done
         docker stop neuroimaging_{wildcards.sample}
