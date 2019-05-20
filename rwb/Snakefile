@@ -41,7 +41,7 @@ rule randomise:
         """
         for nii in `ls {input[niftidir]}`
         do
-            run_randomise="randomise -i {input[niftidir]}/$nii -o {randomise_directory} -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout"
+            run_randomise="randomise -i {input[niftidir]}/$nii -o {randomise_directory} -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout";
             docker run fgiuste/neuroimaging echo hello > {randomise_directory}/{wildcards.sample}/$nii;
             #echo run_randomise >> {randomise_directory}/{wildcards.sample};
         done
