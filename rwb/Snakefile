@@ -31,7 +31,7 @@ DELETERANDOMISE = expand(randomise_directory+"{sample}_deleted", sample = FINISH
 # Rules
 #-------------------------------------------------------------------------------
 rule all:
-    input: RANDOMISE[:300]
+    input: RANDOMISE
     shell:
         """
         echo "Finito";
@@ -67,7 +67,7 @@ rule randomise:
         for nii in `ls {input[niftidir]}`
         do
             run_randomise="randomise -i {input[niftidir]}/$nii -o {randomise_directory}/{wildcards.sample}/$nii/$nii -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout";
-            docker exec neuroimaging_{wildcards.sample} echo $run_randomise > {randomise_directory}/{wildcards.sample}/$nii;
+            docker exec neuroimaging_{wildcards.sample} echo $run_randomise > {randomise_directory}/{wildcards.sample}/$nii/$nii;
         done
         docker stop neuroimaging_{wildcards.sample}
         mv {randomise_directory}/{wildcards.sample} {output}
