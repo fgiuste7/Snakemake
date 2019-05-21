@@ -65,14 +65,11 @@ rule deleteeverything:
 
 # DELETE RANDOMISE:
 rule deletedeletedelete:
-    input: randomisedir= randomise_directory+"{sample}"
+    input: rowslice= randomise_directory+"{sample}"
     output: randomise_directory+"{sample}_deleted"
     shell:
         """
-        for rando in `ls {input[randomisedir]}`
-        do
-            rm -r $rando;
-        done
+        rm -r {input[rowslice]};
         touch {output}
         """
 
