@@ -39,21 +39,23 @@ rule all:
 
 
 # Execute Randomise on each nifti within a RowSlice folder: Starts Container=neuroimaging_{wildcards.sample}
+# docker run -it --rm -v /mnt/gv0/FoxNiftis/1024-1151/:/data/:rw -v /HCP_Data/FG/fox_fullRes/randomise/1024-1151/:/output:rw -v /mnt/gv0/model/:/code:rw --name neuroimaging fgiuste/neuroimaging
+# randomise -i /data/1024-1151_100096-100223.nii.gz -o /output/1024-1151_100096-100223/1024-1151_100096-100223 -d /code/group_comparison.mat -t /code/group_comparison.con -n 5000 -R -N -x --permout
 rule randomise:
     input: niftidir= nifti_directory+"{sample}"
     output: randomise_directory+"{sample}_done"
     shell:
         """
-        docker run -t -d --rm --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging
+        mkdir -m777 -p {randomise_directory}/{wildcards.sample}
+        docker run -t -d --rm -v {input[niftidir]}:/data:rw -v {randomise_directory}/{wildcards.sample}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging
         lslist=`ls {input[niftidir]} | sed s/.nii.gz//`
         for nii in $lslist
         do
-            mkdir -p {randomise_directory}/{wildcards.sample}/$nii;
-            run_randomise="randomise -i {input[niftidir]}/$nii.nii.gz -o {randomise_directory}/{wildcards.sample}/$nii/$nii -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout";
+            mkdir -m777 -p {randomise_directory}/{wildcards.sample}/$nii;
+            run_randomise="randomise -i /data/$nii.nii.gz -o /output/$nii/$nii -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout";
             echo $run_randomise;
-            echo {randomise_directory}/{wildcards.sample}/$nii/$nii;
             echo
-            docker exec neuroimaging_{wildcards.sample} echo $run_randomise > {randomise_directory}/{wildcards.sample}/$nii/$nii;
+            docker exec neuroimaging_{wildcards.sample} $run_randomise; #> {randomise_directory}/{wildcards.sample}/$nii/$nii;
         done
         docker stop neuroimaging_{wildcards.sample}
         mv {randomise_directory}/{wildcards.sample} {output}
