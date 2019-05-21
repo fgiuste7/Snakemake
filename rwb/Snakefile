@@ -24,7 +24,7 @@ npermutations = "5000"
 SAMPLES = [fname.split('/')[-1] for fname in glob.glob('%s/*'%nifti_directory)]
 RANDOMISE = expand(randomise_directory+"{sample}_test", sample = SAMPLES)
 
-FINISHEDRANDOMISE = [fname.split('/')[-1] for fname in glob.glob('%s/*[!_deleted]'%randomise_directory)]
+FINISHEDRANDOMISE = [fname.split('/')[-1] for fname in glob.glob('%s/*'%randomise_directory)]
 DELETERANDOMISE = expand(randomise_directory+"{sample}_deleted", sample = FINISHEDRANDOMISE)
 
 #-------------------------------------------------------------------------------
