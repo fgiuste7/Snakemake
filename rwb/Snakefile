@@ -44,7 +44,7 @@ def getNII(nii):
 # Rules
 #-------------------------------------------------------------------------------
 rule all:
-    input: RANDOMISE[300]
+    input: RANDOMISE[:300]
     shell:
         """
         echo "Finito";
