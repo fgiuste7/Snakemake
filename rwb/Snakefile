@@ -54,24 +54,7 @@ rule testing:
         mv {randomise_directory}/{wildcards.sample} {output}
         """
 
-# DELETE RANDOMISE:
-rule deleteeverything:
-    input: DELETERANDOMISE
-    shell:
-        """
-        rm {input}
-        echo "*Fin*";
-        """
 
-# DELETE RANDOMISE:
-rule deletedeletedelete:
-    input: rowslice= randomise_directory+"{sample}"
-    output: randomise_directory+"{sample}_deleted"
-    shell:
-        """
-        rm -r {input[rowslice]};
-        touch {output}
-        """
 
 # Execute Randomise on each nifti within a RowSlice folder: Starts Container=neuroimaging_{wildcards.sample}
 rule randomise:
@@ -118,6 +101,29 @@ rule randomise:
 #                 writer=csv.writer(csvfile, delimiter='\t')
 #                 for key, value in counterF.items():
 #                     writer.writerow([key,value])
+
+
+# DELETE RANDOMISE OUTPUT:
+rule deleterandomise:
+    input: DELETERANDOMISE
+    shell:
+        """
+        rm {randomise_directory}/*_deleted
+        echo "*Fin*";
+        """
+
+# DELETE RANDOMISE OUTPUT:
+rule deletedeletedelete:
+    input: rowslice= randomise_directory+"{sample}"
+    output: randomise_directory+"{sample}_deleted"
+    shell:
+        """
+        rm -r {input[rowslice]};
+        touch {output}
+        """
+
+
+
 
 # TODO: create slurm job config file to specify ntasks=1,c=1, manually override for larger jobs
 ## Also: slurm.conf: CR_CPU -> CR_CPU_Memory
