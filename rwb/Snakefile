@@ -25,22 +25,6 @@ SAMPLES = [fname.split('/')[-1] for fname in glob.glob('%s/*'%nifti_directory)]
 RANDOMISE = expand(randomise_directory+"{sample}_test", sample = SAMPLES)
 
 #-------------------------------------------------------------------------------
-# Functions
-#-------------------------------------------------------------------------------
-from collections import Counter
-import glob, os, csv
-import numpy as np
-
-# Function grabs data matrix within nifti file (no header)
-def getNII(nii):
-    import nibabel as nib
-    import numpy as np
-    image_nii = nib.nifti1.load(nii)
-    data_nii = image_nii.get_fdata(dtype=np.float64)
-    image_nii.uncache()
-    return( data_nii )
-
-#-------------------------------------------------------------------------------
 # Rules
 #-------------------------------------------------------------------------------
 rule all:
@@ -116,4 +100,4 @@ rule randomise:
 # TODO: create slurm job config file to specify ntasks=1,c=1, manually override for larger jobs
 ## Also: slurm.conf: CR_CPU -> CR_CPU_Memory
 
-# snakemake --jobs 500 --cluster "sbatch --ntasks=1 --cpus-per-task=2 --hint multithread"
+# snakemake --jobs 500 --cluster "sbatch --ntasks=1 --cpus-per-task=1 --mem={params.mem}"
