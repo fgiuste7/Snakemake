@@ -31,7 +31,7 @@ DELETERANDOMISE = expand(randomise_directory+"{sample}_deleted", sample = FINISH
 # Rules
 #-------------------------------------------------------------------------------
 rule all:
-    input: RANDOMISE[0:50]
+    input: RANDOMISE[0:5]
     shell:
         """
         echo "Finito";
@@ -45,7 +45,8 @@ rule randomise:
     shell:
         """
         docker run -t -d --rm --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging
-        for nii in `ls {input[niftidir]}`
+        lslist=`ls {input[niftidir]} | sed s/.nii.gz//`
+        for nii in $lslist
         do
         mkdir -p {randomise_directory}/{wildcards.sample}/$nii;
             run_randomise="randomise -i {input[niftidir]}/$nii.nii.gz -o {randomise_directory}/{wildcards.sample}/$nii/$nii -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout";
@@ -124,5 +125,8 @@ rule testing:
 
 # TODO: create slurm job config file to specify ntasks=1,c=1, manually override for larger jobs
 ## Also: slurm.conf: CR_CPU -> CR_CPU_Memory
+
+# sudo salt 'SM*' cmd.run 'docker stop $(docker ps -q --filter ancestor=fgiuste/neuroimaging )'
+
 
 # snakemake --jobs 500 --cluster "sbatch --ntasks=1 --cpus-per-task=1 --mem=500M"
