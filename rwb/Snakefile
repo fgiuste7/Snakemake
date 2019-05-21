@@ -23,6 +23,7 @@ npermutations = "5000"
 # SAMPLES: Folder name containing niftis for a row (128 Sources):
 SAMPLES = [fname.split('/')[-1] for fname in glob.glob('%s/*'%nifti_directory)]
 RANDOMISE = expand(randomise_directory+"{sample}_test", sample = SAMPLES)
+DELETEEVERYTHING = expand(randomise_directory+"{sample}_deleted", sample = SAMPLES)
 
 #-------------------------------------------------------------------------------
 # Rules
@@ -49,6 +50,28 @@ rule testing:
         done
         docker stop neuroimaging_{wildcards.sample}
         mv {randomise_directory}/{wildcards.sample} {output}
+        """
+
+# DELETE RANDOMISE:
+rule deleteeverything:
+    input: RANDOMISE
+    shell:
+        """
+        rm {input}
+        echo "*Fin*";
+        """
+
+# DELETE RANDOMISE:
+rule deletedeletedelete:
+    input: randomisedir= randomise_directory+"{sample}_done"
+    output: randomise_directory+"{sample}_deleted"
+    shell:
+        """
+        for rando in `ls {input[randomisedir]}`
+        do
+            rm -r $rando;
+        done
+        touch {output}
         """
 
 # Execute Randomise on each nifti within a RowSlice folder: Starts Container=neuroimaging_{wildcards.sample}
@@ -100,4 +123,4 @@ rule randomise:
 # TODO: create slurm job config file to specify ntasks=1,c=1, manually override for larger jobs
 ## Also: slurm.conf: CR_CPU -> CR_CPU_Memory
 
-# snakemake --jobs 500 --cluster "sbatch --ntasks=1 --cpus-per-task=1 --mem={params.mem}"
+# snakemake --jobs 500 --cluster "sbatch --ntasks=1 --cpus-per-task=1 --mem=500M"
