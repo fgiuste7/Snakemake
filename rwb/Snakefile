@@ -23,7 +23,9 @@ npermutations = "5000"
 # SAMPLES: Folder name containing niftis for a row (128 Sources):
 SAMPLES = [fname.split('/')[-1] for fname in glob.glob('%s/*'%nifti_directory)]
 RANDOMISE = expand(randomise_directory+"{sample}_test", sample = SAMPLES)
-DELETERANDOMISE = expand(randomise_directory+"{sample}_deleted", sample = SAMPLES)
+
+FINISHEDRANDOMISE = [fname.split('/')[-1] for fname in glob.glob('%s/*'%randomise_directory)]
+DELETERANDOMISE = expand(randomise_directory+"{sample}_deleted", sample = FINISHEDRANDOMISE)
 
 #-------------------------------------------------------------------------------
 # Rules
@@ -63,7 +65,7 @@ rule deleteeverything:
 
 # DELETE RANDOMISE:
 rule deletedeletedelete:
-    input: randomisedir= randomise_directory+"{sample}_done"
+    input: randomisedir= randomise_directory+"{sample}"
     output: randomise_directory+"{sample}_deleted"
     shell:
         """
