@@ -9,7 +9,7 @@ import glob, os
 # Constants
 #-------------------------------------------------------------------------------
 nifti_directory= "/mnt/gv0/FoxNiftis/"
-randomise_directory= "/mnt/gv0/randomise/"
+randomise_directory= "/HCP_Data/FG/fox_fullRes/randomise/" # Changed from "/mnt/gv0/randomise/"
 model_directory = "/mnt/gv0/model/"
 design_matrix = "%s/group_comparison.mat" % model_directory
 contrast_matrix = "%s/group_comparison.con" % model_directory
@@ -21,7 +21,7 @@ npermutations = "5000"
 # Config
 #-------------------------------------------------------------------------------
 # SAMPLES: Folder name containing niftis for a row (128 Sources):
-SAMPLES = [fname.split('/')[-1] for fname in glob.glob('%s/*'%nifti_directory)]
+SAMPLES = [fname.split('/')[-1].split('.nii')[0] for fname in glob.glob('%s/*'%nifti_directory)]
 RANDOMISE = expand(randomise_directory+"{sample}_done", sample = SAMPLES)
 
 FINISHEDRANDOMISE = [fname.split('/')[-1] for fname in glob.glob('%s/*'%randomise_directory)]
@@ -31,7 +31,7 @@ DELETERANDOMISE = expand(randomise_directory+"{sample}_deleted", sample = FINISH
 # Rules
 #-------------------------------------------------------------------------------
 rule all:
-    input: RANDOMISE
+    input: RANDOMISE[0:50]
     shell:
         """
         echo "Finito";
@@ -45,11 +45,11 @@ rule randomise:
     shell:
         """
         docker run -t -d --rm --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging
-        mkdir -p {randomise_directory}/{wildcards.sample};
         for nii in `ls {input[niftidir]}`
         do
-            run_randomise="randomise -i {input[niftidir]}/$nii -o {randomise_directory}/{wildcards.sample}/$nii/$nii -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout";
-            docker exec neuroimaging_{wildcards.sample} echo $run_randomise > {randomise_directory}/{wildcards.sample}/$nii/$nii;
+        mkdir -p {randomise_directory}/{wildcards.sample}/$nii;
+            run_randomise="randomise -i {input[niftidir]}/$nii.nii.gz -o {randomise_directory}/{wildcards.sample}/$nii/$nii -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout";
+            docker exec neuroimaging_{wildcards.sample} $run_randomise > {randomise_directory}/{wildcards.sample}/$nii/$nii;
         done
         docker stop neuroimaging_{wildcards.sample}
         mv {randomise_directory}/{wildcards.sample} {output}
