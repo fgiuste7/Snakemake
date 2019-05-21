@@ -116,6 +116,7 @@ rule testing:
     output: randomise_directory+"{sample}_test"
     shell:
         """
+        echo 'docker run -t -d --rm --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging'
         docker run -t -d --rm --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging
         mkdir -p {randomise_directory}/{wildcards.sample};
         for nii in `ls {input[niftidir]}`
