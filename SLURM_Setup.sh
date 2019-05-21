@@ -53,7 +53,7 @@ sudo tail -n30 /var/log/slurm-llnl/slurmctld.log
 # Check munge log:
 sudo tail -n30 /var/log/munge/munged.log
 
-# Resert slurm.conf:
+# Reset slurm.conf:
 sudo scontrol reconfigure
 
 # Get node Status:Drain explanation:
@@ -89,3 +89,6 @@ sbatch --test-only myscript.sh
 
 # Get Job info after completion:
 sacct -j ${Job_ID} --format=JobID,JobName,MaxRSS,Elapsed
+
+# Show job resource usage:
+squeue -o '%.5i %.2t %.4M %.5D %7H %6I %7J %6z %R'
