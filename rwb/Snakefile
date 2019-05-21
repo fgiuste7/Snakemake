@@ -22,7 +22,7 @@ npermutations = "5000"
 #-------------------------------------------------------------------------------
 # SAMPLES: Folder name containing niftis for a row (128 Sources):
 SAMPLES = [fname.split('/')[-1] for fname in glob.glob('%s/*'%nifti_directory)]
-RANDOMISE = expand(randomise_directory+"{sample}_test", sample = SAMPLES)
+RANDOMISE = expand(randomise_directory+"{sample}_done", sample = SAMPLES)
 
 FINISHEDRANDOMISE = [fname.split('/')[-1] for fname in glob.glob('%s/*'%randomise_directory)]
 DELETERANDOMISE = expand(randomise_directory+"{sample}_deleted", sample = FINISHEDRANDOMISE)
@@ -36,24 +36,6 @@ rule all:
         """
         echo "Finito";
         """
-
-# For Testing:
-rule testing:
-    input: niftidir= nifti_directory+"{sample}"
-    output: randomise_directory+"{sample}_test"
-    shell:
-        """
-        docker run -t -d --rm --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging
-        mkdir -p {randomise_directory}/{wildcards.sample};
-        for nii in `ls {input[niftidir]}`
-        do
-            run_randomise="randomise -i {input[niftidir]}/$nii -o {randomise_directory}/{wildcards.sample}/$nii/$nii -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout";
-            docker exec neuroimaging_{wildcards.sample} echo $run_randomise > {randomise_directory}/{wildcards.sample}/$nii;
-        done
-        docker stop neuroimaging_{wildcards.sample}
-        mv {randomise_directory}/{wildcards.sample} {output}
-        """
-
 
 
 # Execute Randomise on each nifti within a RowSlice folder: Starts Container=neuroimaging_{wildcards.sample}
@@ -122,7 +104,22 @@ rule deletedeletedelete:
         touch {output}
         """
 
-
+# For Testing:
+rule testing:
+    input: niftidir= nifti_directory+"{sample}"
+    output: randomise_directory+"{sample}_test"
+    shell:
+        """
+        docker run -t -d --rm --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging
+        mkdir -p {randomise_directory}/{wildcards.sample};
+        for nii in `ls {input[niftidir]}`
+        do
+            run_randomise="randomise -i {input[niftidir]}/$nii -o {randomise_directory}/{wildcards.sample}/$nii/$nii -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout";
+            docker exec neuroimaging_{wildcards.sample} echo $run_randomise > {randomise_directory}/{wildcards.sample}/$nii;
+        done
+        docker stop neuroimaging_{wildcards.sample}
+        mv {randomise_directory}/{wildcards.sample} {output}
+        """
 
 
 # TODO: create slurm job config file to specify ntasks=1,c=1, manually override for larger jobs
