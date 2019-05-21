@@ -47,13 +47,14 @@ rule randomise:
     shell:
         """
         mkdir -m777 -p {randomise_directory}/{wildcards.sample}
-        docker run -t -d --rm -v {input[niftidir]}:/data:rw -v {randomise_directory}/{wildcards.sample}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging
+        echo 'docker run -t -d --rm -v {input[niftidir]}:/data:rw -v {randomise_directory}/{wildcards.sample}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging';
+        docker run -t -d --rm -v {input[niftidir]}:/data:rw -v {randomise_directory}/{wildcards.sample}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging;
         lslist=`ls {input[niftidir]} | sed s/.nii.gz//`
         for nii in $lslist
         do
             mkdir -m777 -p {randomise_directory}/{wildcards.sample}/$nii;
             run_randomise="randomise -i /data/$nii.nii.gz -o /output/$nii/$nii -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout";
-            echo $run_randomise;
+            echo 'docker exec neuroimaging_{wildcards.sample} $run_randomise; #> {randomise_directory}/{wildcards.sample}/$nii/$nii';
             docker exec neuroimaging_{wildcards.sample} $run_randomise; #> {randomise_directory}/{wildcards.sample}/$nii/$nii;
             echo
         done
