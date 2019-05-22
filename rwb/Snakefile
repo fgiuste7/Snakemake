@@ -11,8 +11,8 @@ import glob, os
 nifti_directory= "/mnt/gv0/FoxNiftis/"
 randomise_directory= "/HCP_Data/FG/fox_fullRes/randomise/" # Changed from "/mnt/gv0/randomise/"
 model_directory = "/mnt/gv0/model/"
-design_matrix = "%s/group_comparison.mat" % model_directory
-contrast_matrix = "%s/group_comparison.con" % model_directory
+design_matrix = "group_comparison.mat"
+contrast_matrix = "group_comparison.con"
 npermutations = "5000"
 #ncontrasts = np.genfromtxt(contrasts, skip_header=4, comments='/').shape[0]
 
@@ -53,9 +53,9 @@ rule randomise:
         for nii in $lslist
         do
             mkdir -m777 -p {randomise_directory}/{wildcards.sample}/$nii;
-            run_randomise="randomise -i /data/$nii.nii.gz -o /output/$nii/$nii -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout";
-            echo "docker exec neuroimaging_{wildcards.sample} $run_randomise; #> {randomise_directory}/{wildcards.sample}/$nii/$nii";
-            docker exec neuroimaging_{wildcards.sample} $run_randomise; #> {randomise_directory}/{wildcards.sample}/$nii/$nii;
+            run_randomise="randomise -i /data/$nii.nii.gz -o /output/$nii/$nii -d /code/{design_matrix} -t /code/{contrast_matrix} -n {npermutations} -R -N -x --permout";
+            echo docker exec neuroimaging_{wildcards.sample} /bin/bash -c ". /home/startup.sh && $run_randomise";
+            docker exec neuroimaging_{wildcards.sample} /bin/bash -c ". /home/startup.sh && $run_randomise"
             echo
         done
         docker stop neuroimaging_{wildcards.sample}
@@ -146,7 +146,10 @@ rule testing:
 
 
 # Example:
-# docker run -t -d --rm -v /mnt/gv0/FoxNiftis/512-639:/data:rw -v /HCP_Data/FG/fox_fullRes/randomise//512-639:/output:rw -v /mnt/gv0/model/:/code:rw --name neuroimaging_512-639 fgiuste/neuroimaging
-# docker exec neuroimaging_512-639 $run_randomise; 
+# docker run -t -d --rm -v /mnt/gv0/FoxNiftis/512-639:/data:rw -v /HCP_Data/FG/fox_fullRes/randomise//512-639:/output:rw -v /mnt/gv0/model/:/code:rw --name neuroimaging_512-639 fgiuste/neuroimaging bash; 
+# docker exec neuroimaging_512-639 /bin/bash -c ". /home/startup.sh && randomise -i /data/512-639_100096-100223.nii.gz -o /output/512-639_100096-100223/512-639_100096-100223 -d /code/group_comparison.mat -t /code/group_comparison.con -n 5000 -R -N -x --permout"; 
+
+#docker exec neuroimaging_{wildcards.sample} /bin/bash -c ". /home/startup.sh && $run_randomise"
 
 
+# docker exec neuroimaging_512-639 /bin/bash -c '. /home/startup.sh && randomise'
