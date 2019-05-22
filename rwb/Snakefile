@@ -31,7 +31,7 @@ DELETERANDOMISE = expand(randomise_directory+"{sample}_deleted", sample = FINISH
 # Rules
 #-------------------------------------------------------------------------------
 rule all:
-    input: RANDOMISE[0]
+    input: RANDOMISE[0:64]
     shell:
         """
         echo "Finito";
