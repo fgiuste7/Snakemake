@@ -65,15 +65,10 @@ sudo scontrol update nodename=SM4 state=resume
 # Remove Node from Cluster: (needs reason)
 sudo scontrol update nodename=SM1 state=down reason="Does not recognize User:fgiuste"
 
-# Sync system time:
-# https://www.tecmint.com/synchronize-time-with-ntp-in-linux/
-# NTP=0.north-america.pool.ntp.org
-sudo vim /etc/systemd/timesyncd.conf
-sudo timedatectl set-ntp true
-timedatectl status
 
-sudo cp /etc/systemd/timesyncd.conf /home/fgiuste/Slurm/timesyncd.conf
-sudo salt 'SM*' cmd.run 'cp /home/fgiuste/Slurm/timesyncd.conf /etc/systemd/timesyncd.conf'
+#_ SLURM Job Submission _________________________________________#
+sbatch -p ${PartitionName} --ntasks=1 --cpus-per-task=1 --mem=500M
+
 
 
 #_ SLURM Administration _________________________________________#
@@ -91,4 +86,5 @@ sbatch --test-only myscript.sh
 sacct -j ${Job_ID} --format=JobID,JobName,MaxRSS,Elapsed
 
 # Show job resource usage:
-squeue -o '%.5i %.2t %.4M %.5D %7H %6I %7J %6z %R'
+#squeue -o '%.5i %.2t %.4M %.5D %7H %6I %7J %6z %R'
+squeue -o '%.5i    %.2t    %.4M    %.5D    %R'
