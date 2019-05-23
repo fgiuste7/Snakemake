@@ -72,6 +72,9 @@ sbatch -p ${PartitionName} --ntasks=1 --cpus-per-task=1 --mem=500M
 
 
 #_ SLURM Administration _________________________________________#
+# Cancel all jobs on partition:
+scancel -u ${USER} -p ${PartitionName}
+
 # Show all jobs:
 scontrol show job
 
