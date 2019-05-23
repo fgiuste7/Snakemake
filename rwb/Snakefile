@@ -136,7 +136,7 @@ rule testing:
 # sudo salt 'SM*' cmd.run 'docker stop $(docker ps -q --filter ancestor=fgiuste/neuroimaging )'
 
 
-# snakemake --jobs 500 --cluster "sbatch -p HPG7s -J='rwbHPG7'--ntasks=1 --cpus-per-task=1 --mem=500M"
+# snakemake --jobs 500 --cluster "sbatch -p HPG7s -J 'rwbHPG7' --ntasks=1 --cpus-per-task=1 --mem=500M"
 
 
 
