@@ -9,11 +9,11 @@ import glob, os
 # Constants
 #-------------------------------------------------------------------------------
 nifti_directory= "/mnt/gv0/FoxNiftis/"
-randomise_directory= "/HCP_Data/FG/fox_fullRes/randomise/" # Changed from "/mnt/gv0/randomise/"
+randomise_directory= "/glushpg7/FOX_NIFTIS/fox_fullRes/randomise/" #"/HCP_Data/FG/fox_fullRes/randomise/" 
 model_directory = "/mnt/gv0/model/"
 design_matrix = "group_comparison.mat"
 contrast_matrix = "group_comparison.con"
-npermutations = "5000"
+npermutations = "50" #5000
 #ncontrasts = np.genfromtxt(contrasts, skip_header=4, comments='/').shape[0]
 
 
@@ -31,7 +31,7 @@ DELETERANDOMISE = expand(randomise_directory+"{sample}_deleted", sample = FINISH
 # Rules
 #-------------------------------------------------------------------------------
 rule all:
-    input: RANDOMISE[0:64]
+    input: RANDOMISE[0:240]
     shell:
         """
         echo "Finito";
@@ -136,7 +136,7 @@ rule testing:
 # sudo salt 'SM*' cmd.run 'docker stop $(docker ps -q --filter ancestor=fgiuste/neuroimaging )'
 
 
-# snakemake --jobs 500 --cluster "sbatch --ntasks=1 --cpus-per-task=1 --mem=500M"
+# snakemake --jobs 500 --cluster "sbatch -p HPG7s -J='rwbHPG7'--ntasks=1 --cpus-per-task=1 --mem=500M"
 
 
 
