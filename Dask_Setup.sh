@@ -6,6 +6,7 @@ conda create -n dask python=3
 conda activate dask
 
 # Create ~/.condarc to define proxy
+# https://github.com/conda/conda/issues/3529
 conda config
 
 vim ~/.condarc
