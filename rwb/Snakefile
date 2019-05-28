@@ -33,7 +33,7 @@ DELETERANDOMISE = [randomise_directory+fname+"_deleted" for fname in FINISHEDRAN
 # Rules
 #-------------------------------------------------------------------------------
 rule all:
-    input: RANDOMISE[0:5]
+    input: RANDOMISE[0]
     shell:
         """
         echo "Finito";
@@ -55,13 +55,13 @@ rule randomise:
         do
             mkdir -m777 -p {temp_directory}/{wildcards.sample}/$nii;
             ####mkdir -m777 -p {randomise_directory}/{wildcards.sample}/$nii;
-            run_randomise="randomise -i /data/$nii.nii.gz -o {temp_directory}/$nii/$nii -d /code/{design_matrix} -t /code/{contrast_matrix} -n {npermutations} -R -N -x --permout";
+            run_randomise="randomise -i /data/$nii.nii.gz -o {temp_directory}/{wildcards.sample}/$nii/$nii -d /code/{design_matrix} -t /code/{contrast_matrix} -n {npermutations} -R -N -x --permout";
             ####run_randomise="randomise -i /data/$nii.nii.gz -o /output/$nii/$nii -d /code/{design_matrix} -t /code/{contrast_matrix} -n {npermutations} -R -N -x --permout";
             docker exec neuroimaging_{wildcards.sample} /bin/bash -c ". /home/startup.sh && $run_randomise"
             echo
         done
         docker stop neuroimaging_{wildcards.sample}
-        
+
         ####mv {randomise_directory}/{wildcards.sample} {output}
         touch {output}
         """
