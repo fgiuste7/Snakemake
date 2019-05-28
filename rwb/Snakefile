@@ -9,12 +9,12 @@ import glob, os
 # Constants
 #-------------------------------------------------------------------------------
 nifti_directory= "/mnt/gv0/FoxNiftis/"
+temp_directory='/tmp/' # Output for randomise within Docker
 randomise_directory= "/mnt/gv0/randomise/" #"/HCP_Data/FG/fox_fullRes/randomise/" 
 model_directory = "/mnt/gv0/model/"
 design_matrix = "group_comparison.mat"
 contrast_matrix = "group_comparison.con"
-npermutations = "50" #5000
-#ncontrasts = np.genfromtxt(contrasts, skip_header=4, comments='/').shape[0]
+npermutations = "5000"
 
 
 #-------------------------------------------------------------------------------
@@ -25,13 +25,15 @@ SAMPLES = [fname.split('/')[-1].split('.nii')[0] for fname in glob.glob('%s/*'%n
 RANDOMISE = expand(randomise_directory+"{sample}_done", sample = SAMPLES)
 
 FINISHEDRANDOMISE = [fname.split('/')[-1] for fname in glob.glob('%s/*'%randomise_directory)]
-DELETERANDOMISE = expand(randomise_directory+"{sample}_deleted", sample = FINISHEDRANDOMISE)
+DELETERANDOMISE = [randomise_directory+fname+"_deleted" for fname in FINISHEDRANDOMISE]
+#DELETERANDOMISE = expand(randomise_directory+"{sample}_deleted", sample = FINISHEDRANDOMISE)
+
 
 #-------------------------------------------------------------------------------
 # Rules
 #-------------------------------------------------------------------------------
 rule all:
-    input: RANDOMISE[0:240]
+    input: RANDOMISE[0:5]
     shell:
         """
         echo "Finito";
@@ -47,14 +49,14 @@ rule randomise:
     shell:
         """
         mkdir -m777 -p {randomise_directory}/{wildcards.sample}
-        echo "docker run -t -d --rm -v {input[niftidir]}:/data:rw -v {randomise_directory}/{wildcards.sample}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging";
         docker run -t -d --rm -v {input[niftidir]}:/data:rw -v {randomise_directory}/{wildcards.sample}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging;
         lslist=`ls {input[niftidir]} | sed s/.nii.gz//`
         for nii in $lslist
         do
-            mkdir -m777 -p {randomise_directory}/{wildcards.sample}/$nii;
-            run_randomise="randomise -i /data/$nii.nii.gz -o /output/$nii/$nii -d /code/{design_matrix} -t /code/{contrast_matrix} -n {npermutations} -R -N -x --permout";
-            echo docker exec neuroimaging_{wildcards.sample} /bin/bash -c ". /home/startup.sh && $run_randomise";
+            mkdir -m777 -p {temp_directory}/{wildcards.sample}/$nii;
+            ####mkdir -m777 -p {randomise_directory}/{wildcards.sample}/$nii;
+            run_randomise="randomise -i /data/$nii.nii.gz -o {temp_directory}/$nii/$nii -d /code/{design_matrix} -t /code/{contrast_matrix} -n {npermutations} -R -N -x --permout";
+            ####run_randomise="randomise -i /data/$nii.nii.gz -o /output/$nii/$nii -d /code/{design_matrix} -t /code/{contrast_matrix} -n {npermutations} -R -N -x --permout";
             docker exec neuroimaging_{wildcards.sample} /bin/bash -c ". /home/startup.sh && $run_randomise"
             echo
         done
@@ -111,29 +113,11 @@ rule deletedeletedelete:
         touch {output}
         """
 
-# For Testing:
-rule testing:
-    input: niftidir= nifti_directory+"{sample}"
-    output: randomise_directory+"{sample}_test"
-    shell:
-        """
-        echo 'docker run -t -d --rm --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging'
-        docker run -t -d --rm --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging
-        mkdir -p {randomise_directory}/{wildcards.sample};
-        for nii in `ls {input[niftidir]}`
-        do
-            run_randomise="randomise -i {input[niftidir]}/$nii -o {randomise_directory}/{wildcards.sample}/$nii/$nii -d {design_matrix} -t {contrast_matrix} -n {npermutations} -R -N -x --permout";
-            docker exec neuroimaging_{wildcards.sample} echo $run_randomise > {randomise_directory}/{wildcards.sample}/$nii;
-        done
-        docker stop neuroimaging_{wildcards.sample}
-        mv {randomise_directory}/{wildcards.sample} {output}
-        """
-
 
 # TODO: create slurm job config file to specify ntasks=1,c=1, manually override for larger jobs
 
 # RUN:
-# snakemake --jobs 500 --cluster "sbatch -p HPG7s -J 'rwbHPG7' --ntasks=1 --cpus-per-task=1 --mem=500M"
+# snakemake --jobs 500 --cluster "sbatch -p SMIs -J 'rwbSMIs' --ntasks=1 --cpus-per-task=1 --mem=500M"
 
 
 
