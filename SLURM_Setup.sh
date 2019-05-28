@@ -96,3 +96,9 @@ squeue -o '%.5i    %.2t    %.4M    %.5D    %R'
 #_ MISC _________________________________________#
 # Stop Docker Containers on Nodes:
 sudo salt 'SM*' cmd.run 'docker stop $(docker ps -q --filter ancestor=fgiuste/neuroimaging )'
+
+# Cleanup /tmp on Nodes as current user:
+sudo salt 'SM*' cmd.run runas=`whoami` 'rm -r /tmp/*'
+
+# Create directory with set owner:
+sudo salt 'SM*' cmd.run 'install -o fgiuste -d /tmp_rwb'

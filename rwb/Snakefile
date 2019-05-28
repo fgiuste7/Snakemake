@@ -9,7 +9,7 @@ import glob, os
 # Constants
 #-------------------------------------------------------------------------------
 nifti_directory= "/mnt/gv0/FoxNiftis/"
-temp_directory='/tmp/' # Output for randomise within Docker mapped onto Node filesystem
+temp_directory='/tmp_rwb/' # Output for randomise within Docker mapped onto Node filesystem
 randomise_directory= "/mnt/gv0/randomise/" #"/HCP_Data/FG/fox_fullRes/randomise/" 
 model_directory = "/mnt/gv0/model/"
 design_matrix = "group_comparison.mat"
@@ -25,7 +25,10 @@ SAMPLES = [fname.split('/')[-1].split('.nii')[0] for fname in glob.glob('%s/*'%n
 RANDOMISE = expand(randomise_directory+"{sample}_done", sample = SAMPLES)
 
 FINISHEDRANDOMISE = [fname.split('/')[-1] for fname in glob.glob('%s/*'%randomise_directory)]
+FINISHEDTEMP = [fname.split('/')[-1] for fname in glob.glob('%s/*'%temp_directory)]
 DELETERANDOMISE = [randomise_directory+fname+"_deleted" for fname in FINISHEDRANDOMISE]
+DELETETEMP = [temp_directory+fname+"_deleted" for fname in FINISHEDTEMP]
+
 #DELETERANDOMISE = expand(randomise_directory+"{sample}_deleted", sample = FINISHEDRANDOMISE)
 
 
@@ -33,7 +36,7 @@ DELETERANDOMISE = [randomise_directory+fname+"_deleted" for fname in FINISHEDRAN
 # Rules
 #-------------------------------------------------------------------------------
 rule all:
-    input: RANDOMISE[0]
+    input: RANDOMISE[0:224]
     shell:
         """
         echo "Finito";
