@@ -9,7 +9,7 @@ import glob, os
 # Constants
 #-------------------------------------------------------------------------------
 nifti_directory= "/mnt/gv0/FoxNiftis/"
-temp_directory='/tmp/' # Output for randomise within Docker
+temp_directory='/tmp/' # Output for randomise within Docker mapped onto Node filesystem
 randomise_directory= "/mnt/gv0/randomise/" #"/HCP_Data/FG/fox_fullRes/randomise/" 
 model_directory = "/mnt/gv0/model/"
 design_matrix = "group_comparison.mat"
@@ -49,7 +49,7 @@ rule randomise:
     shell:
         """
         mkdir -m777 -p {randomise_directory}/{wildcards.sample}
-        docker run -t -d --rm -v {input[niftidir]}:/data:rw -v {randomise_directory}/{wildcards.sample}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging;
+        docker run -t -d --rm -v {temp_directory}:{temp_directory}:rw -v {input[niftidir]}:/data:rw -v {randomise_directory}/{wildcards.sample}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging;
         lslist=`ls {input[niftidir]} | sed s/.nii.gz//`
         for nii in $lslist
         do
@@ -61,7 +61,9 @@ rule randomise:
             echo
         done
         docker stop neuroimaging_{wildcards.sample}
-        mv {randomise_directory}/{wildcards.sample} {output}
+        
+        ####mv {randomise_directory}/{wildcards.sample} {output}
+        touch {output}
         """
 
 # rule permutation:
