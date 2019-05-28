@@ -9,7 +9,7 @@ import glob, os
 # Constants
 #-------------------------------------------------------------------------------
 nifti_directory= "/mnt/gv0/FoxNiftis/"
-randomise_directory= "/glushpg7/FOX_NIFTIS/fox_fullRes/randomise/" #"/HCP_Data/FG/fox_fullRes/randomise/" 
+randomise_directory= "/mnt/gv0/randomise/" #"/HCP_Data/FG/fox_fullRes/randomise/" 
 model_directory = "/mnt/gv0/model/"
 design_matrix = "group_comparison.mat"
 contrast_matrix = "group_comparison.con"
@@ -131,17 +131,9 @@ rule testing:
 
 
 # TODO: create slurm job config file to specify ntasks=1,c=1, manually override for larger jobs
-## Also: slurm.conf: CR_CPU -> CR_CPU_Memory
 
-# sudo salt 'SM*' cmd.run 'docker stop $(docker ps -q --filter ancestor=fgiuste/neuroimaging )'
-
-
+# RUN:
 # snakemake --jobs 500 --cluster "sbatch -p HPG7s -J 'rwbHPG7' --ntasks=1 --cpus-per-task=1 --mem=500M"
-
-
-
-
-
 
 
 
@@ -150,6 +142,3 @@ rule testing:
 # docker exec neuroimaging_512-639 /bin/bash -c ". /home/startup.sh && randomise -i /data/512-639_100096-100223.nii.gz -o /output/512-639_100096-100223/512-639_100096-100223 -d /code/group_comparison.mat -t /code/group_comparison.con -n 5000 -R -N -x --permout"; 
 
 #docker exec neuroimaging_{wildcards.sample} /bin/bash -c ". /home/startup.sh && $run_randomise"
-
-
-# docker exec neuroimaging_512-639 /bin/bash -c '. /home/startup.sh && randomise'
