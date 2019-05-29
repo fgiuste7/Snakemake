@@ -102,3 +102,6 @@ sudo salt 'SM*' cmd.run runas=`whoami` 'rm -r /tmp/*'
 
 # Create directory with set owner:
 sudo salt 'SM*' cmd.run 'install -o fgiuste -d /tmp_rwb'
+
+# Cleanup created tmp directory:
+sudo salt 'SM*' cmd.run 'rm -r /tmp_rwb/*'
