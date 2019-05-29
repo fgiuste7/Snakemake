@@ -67,8 +67,7 @@ sudo scontrol update nodename=SM1 state=down reason="Does not recognize User:fgi
 
 
 #_ SLURM Job Submission _________________________________________#
-sbatch -p ${PartitionName} --ntasks=1 --cpus-per-task=1 --mem=500M
-
+sbatch -p ${PartitionName} -J ${JobName} --ntasks=1 --cpus-per-task=1 --mem=500M
 
 
 #_ SLURM Administration _________________________________________#
@@ -105,3 +104,9 @@ sudo salt 'SM*' cmd.run 'install -o fgiuste -d /tmp_rwb'
 
 # Cleanup created tmp directory:
 sudo salt 'SM*' cmd.run 'rm -r /tmp_rwb/*'
+
+# Delete files NOT matching regex:
+find . -type d ! -name '*_done' -delete
+
+# Get Processes using specified port:
+lsof -i:${PortNumber}

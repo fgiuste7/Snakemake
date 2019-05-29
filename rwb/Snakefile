@@ -65,8 +65,8 @@ rule randomise:
         done
         docker stop neuroimaging_{wildcards.sample}
 
-        ####mv {randomise_directory}/{wildcards.sample} {output}
-        touch {output}
+        mv {randomise_directory}/{wildcards.sample} {output}
+        ####touch {output}
         """
 
 # rule permutation:
