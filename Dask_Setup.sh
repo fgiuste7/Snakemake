@@ -10,7 +10,7 @@ conda activate dask
 conda config
 
 vim ~/.condarc
-# copy/paste (delete brakets):
+# copy/paste (delete brackets):
 #proxy_servers:
 #  - http: 170.140.138.165:8000
 #  - https: 170.140.138.165:8000
