@@ -3,13 +3,16 @@
 
 ### Command Line Argument Processing ###
 import sys
-print(len(sys.argv))
+print(sys.argv)
 if(len(sys.argv) == 3):
-    print(sys.argv)
     randout = sys.argv[1]
     ncontrasts = sys.argv[2]
+    print("randout: %s"%(randout,))
+    print("ncontrasts: %s"%(ncontrasts,))
 else:
+    print("Incorrect number of arguments, should be 2\nWas: %s" % (len(sys.argv)-1))
     exit()
+
 
 # Function grabs data matrix within nifti file (no header):
 def getNII(nii):
