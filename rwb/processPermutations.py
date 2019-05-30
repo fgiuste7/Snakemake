@@ -33,10 +33,11 @@ def processPermutations(randout, ncontrasts):
     import numpy as np
     import os
     for contrast in range(1, ncontrasts+1):
+        print("Contrast: %s" % contrast, end='\r')
         perms = glob.glob('%s/*_vox_tstat%s_perm*.nii.gz' %
                           (randout, contrast))
         perms.sort(key=lambda x: int(x.split('_perm')[-1].split('.nii.gz')[0]))
-
+        print(perms)
         counterF = Counter()
         for i in perms:
             print("Permutation: %s" % i, end='\r')
