@@ -6,7 +6,7 @@ import sys
 print(sys.argv)
 if(len(sys.argv) == 3):
     randout = sys.argv[1]
-    ncontrasts = sys.argv[2]
+    ncontrasts = int(sys.argv[2])
     print("randout: %s"%(randout,))
     print("ncontrasts: %s"%(ncontrasts,))
 else:
@@ -39,6 +39,7 @@ def processPermutations(randout, ncontrasts):
 
         counterF = Counter()
         for i in perms:
+            print("Permutation: %s" % i, end='\r')
             # load nifti data:
             tmp = getNII(i)
             # round to tenths:

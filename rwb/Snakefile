@@ -44,7 +44,7 @@ rule all:
 
 
 # Execute Randomise on each nifti within a RowSlice folder: Starts Container=neuroimaging_{wildcards.sample}
-# docker run -it --rm -v /mnt/gv0/FoxNiftis/1024-1151/:/data/:rw -v /HCP_Data/FG/fox_fullRes/randomise/1024-1151/:/output:rw -v /mnt/gv0/model/:/code:rw --name neuroimaging fgiuste/neuroimaging
+# docker run -it --rm -v /tmp_rwb:/tmp_rwb:rw -v /mnt/gv0/FoxNiftis/1024-1151/:/data/:rw -v /mnt/gv0/randomise/1024-1151/:/output:rw -v /mnt/gv0/model/:/code:rw --name neuroimaging fgiuste/neuroimaging
 # randomise -i /data/1024-1151_100096-100223.nii.gz -o /output/1024-1151_100096-100223/1024-1151_100096-100223 -d /code/group_comparison.mat -t /code/group_comparison.con -n 5000 -R -N -x --permout
 rule randomise:
     input: niftidir= nifti_directory+"{sample}"
