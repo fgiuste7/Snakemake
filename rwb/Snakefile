@@ -88,11 +88,13 @@ rule deleterandomise:
 
 # DELETE RANDOMISE OUTPUT:
 rule deletedeletedelete:
-    input: rowslice= randomise_directory+"{sample}"
+    input:  randout= randomise_directory+"{sample}",
+            tmpout= temp_directory+"{sample}"
     output: randomise_directory+"{sample}_deleted"
     shell:
         """
-        rm -r {input[rowslice]};
+        rm -r {input[randout]};
+        rm -r {input[tmpout]};
         touch {output}
         """
 
