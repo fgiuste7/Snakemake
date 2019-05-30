@@ -1,6 +1,16 @@
 # processPermutations(randout, ncontrasts): concatenates permutation-level output from FSL Randomise into compact histograms for later analysis
 # By: Felipe Giuste
 
+### Command Line Argument Processing ###
+import sys
+print(len(sys.argv))
+if(len(sys.argv) == 3):
+    print(sys.argv)
+    randout = sys.argv[1]
+    ncontrasts = sys.argv[2]
+else:
+    exit()
+
 # Function grabs data matrix within nifti file (no header):
 def getNII(nii):
     import nibabel as nib
@@ -42,3 +52,6 @@ def processPermutations(randout, ncontrasts):
             writer = csv.writer(csvfile, delimiter='\t')
             for key, value in counterF.items():
                 writer.writerow([key, value])
+
+# Run:
+processPermutations(randout, ncontrasts)
