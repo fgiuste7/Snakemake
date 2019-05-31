@@ -38,7 +38,6 @@ def processPermutations(randout, ncontrasts):
         perms.sort(key=lambda x: int(x.split('_perm')[-1].split('.nii.gz')[0]))
         counterF = Counter()
         for i in perms:
-            print("Permutation: %s" % i, end='\r')
             # load nifti data:
             tmp = getNII(i)
             # round to tenths:
