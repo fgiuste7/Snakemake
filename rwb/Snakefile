@@ -10,7 +10,8 @@ import glob, os
 #-------------------------------------------------------------------------------
 nifti_directory= "/mnt/gv0/FoxNiftis/"
 temp_directory='/tmp_rwb/' # Output for randomise within Docker mapped onto Node filesystem
-randomise_directory= "/mnt/gv0/randomise/" #"/HCP_Data/FG/fox_fullRes/randomise/" 
+randomise_directory= "/mnt/gv0/randomise" #"/HCP_Data/FG/fox_fullRes/randomise/" 
+tstat_directory= "/mnt/gv0/tstat/"
 model_directory = "/mnt/gv0/model/"
 design_matrix = "group_comparison.mat"
 contrast_matrix = "group_comparison.con"
@@ -45,8 +46,8 @@ rule all:
 # sample: rowSlice
 # nii: chunk
 rule randomise:
-    input: niftidir= nifti_directory+"{sample}"
-    output: randomise_directory+"{sample}_done"
+    input: niftidir= nifti_directory+"/{sample}"
+    output: randomise_directory+"/{sample}_done"
     shell:
         """
         # Create randomise_directory/sample:
@@ -77,6 +78,42 @@ rule randomise:
         """
 
 
+rule randomiseRename:
+    input: RANDOMISE[0:32]
+    output: randomise_directory+"_done"
+    shell:
+        """
+        mv {randomise_directory} {output}
+        echo "All Randomise Output Completed";
+        """
+
+
+# Merges tstat files from {randomise_directory}: Starts Container=neuroimaging_{wildcards.sample}
+# sample: rowSlice
+rule mergeTstats:
+    input:  randout= randomise_directory+"_done"
+    output: tstatout= tstat_directory+"/{sample}_done"
+    shell:
+        """
+        # Create tstat_directory:
+        mkdir -m777 -p {tstat_directory}
+
+        # Docker Container:
+        # data -> randout
+        # output -> tstat_directory
+        docker run -t -d --rm -v {input[randout]}:/data:rw -v {tstat_directory}:/output:rw -v {model_directory}:/code:rw--name neuroimaging_mergeTstats fgiuste/neuroimaging;
+        
+        # Permutation processing:
+        docker exec neuroimaging_mergeTstats python /code/processPermutations.py
+
+        # Shut down Container:
+        docker stop neuroimaging_mergeTstats
+
+        # Rename tstat_directory to signify end:
+        mv {tstat_directory} {output}
+        """
+
+
 # DELETE RANDOMISE OUTPUT:
 rule deleterandomise:
     input: DELETERANDOMISE
@@ -88,9 +125,9 @@ rule deleterandomise:
 
 # DELETE RANDOMISE OUTPUT:
 rule deletedeletedelete:
-    input:  randout= randomise_directory+"{sample}",
-            tmpout= temp_directory+"{sample}"
-    output: randomise_directory+"{sample}_deleted"
+    input:  randout= randomise_directory+"/{sample}",
+            tmpout= temp_directory+"/{sample}"
+    output: randomise_directory+"/{sample}_deleted"
     shell:
         """
         rm -r {input[randout]};

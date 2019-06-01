@@ -1,4 +1,4 @@
-# mergeTestTs(randout, mergeout, contrast): Merge test T-statistic files across chunks into single file for each contrast
+# mergeTstats(randout, tstatout, contrast): Merge test T-statistic files across chunks into single file for each contrast
 # By: Felipe Giuste
 
 ### Command Line Argument Processing ###
@@ -6,10 +6,10 @@ import sys
 print(sys.argv)
 if(len(sys.argv) == 4):
     randout = sys.argv[1]
-    mergeout = sys.argv[2]
+    tstatout = sys.argv[2]
     ncontrasts = int(sys.argv[3])
     print("randout: %s"%(randout,))
-    print("mergeout: %s"%(mergeout,))
+    print("tstatout: %s"%(tstatout,))
     print("ncontrasts: %s"%(ncontrasts,))
 else:
     print("Incorrect number of arguments, should be 3\nWas: %s" % (len(sys.argv)-1))
@@ -27,11 +27,11 @@ def getNII(nii):
 
 
 # Merge test T-statistic files across chunks into single file:
-def mergeTestTs(randout, mergeout, contrast):
+def mergeTstats(randout, tstatout, contrast):
     import numpy as np
     from glob import glob
     import re, zarr
-    zarrf= '%s/TestTs_%s.zarr' % (mergeout, contrast)
+    zarrf= '%s/TestTs_%s.zarr' % (tstatout, contrast)
     print('Merging Test-T Values from contrast: %s' % contrast) 
     
     # randomise results: randout/rowSlice/chunk/chunk*
@@ -63,4 +63,4 @@ def mergeTestTs(randout, mergeout, contrast):
 
 # Merge test T-statistic files across chunks into single file for a contrast:
 for contrast in range(1,ncontrasts+1):
-    mergeTestTs(randout, mergeout, contrast)
+    mergeTstats(randout, tstatout, contrast)
