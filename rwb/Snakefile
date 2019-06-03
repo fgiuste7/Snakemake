@@ -102,7 +102,7 @@ rule randomise:
 
 
 rule randomiseRename:
-    input: RANDOMISE[0:32]
+    input: RANDOMISE[0]
     output: randomise_directory+"_done" # The directory itself changes names
     shell:
         """
