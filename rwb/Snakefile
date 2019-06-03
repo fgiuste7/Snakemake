@@ -97,7 +97,7 @@ rule randomise:
 
         # Copy final output to randomise_directory/sample_done:
         echo {temp_directory}/{wildcards.sample}
-        cp {temp_directory}/{wildcards.sample} {output}
+        mv {temp_directory}/{wildcards.sample} {output}
         """
 
 
