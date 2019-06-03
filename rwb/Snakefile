@@ -62,7 +62,8 @@ rule randomise:
         for nii in $chunklist
         do
             
-            if [ -d "{temp_directory}/{wildcards.sample}/$nii_done" ]; then
+            if [ -d "{temp_directory}/{wildcards.sample}/$nii_done" ]
+            then
                 continue
             fi
 
@@ -72,21 +73,9 @@ rule randomise:
             # Randomise on Chunk within Container:
             run_randomise="randomise -i /data/$nii.nii.gz -o {temp_directory}/{wildcards.sample}/$nii/$nii -d /code/{design_matrix} -t /code/{contrast_matrix} -n {npermutations} -R -N -x --permout";
             docker exec neuroimaging_{wildcards.sample} /bin/bash -c ". /home/startup.sh && $run_randomise"
-                
-            # Check for error:
-            if [ "$?" -ne 0 ]; then
-                echo "BAD RANDOMISE"
-                exit(777)
-            fi
 
             # Permutation processing:
             docker exec neuroimaging_{wildcards.sample} python /code/processPermutations.py {temp_directory}/{wildcards.sample}/$nii {ncontrasts}
-
-            # Check for error:
-            if [ "$?" -ne 0 ]; then
-                echo "BAD PERMUTATION PROCESSING"
-                exit(777)
-            fi
 
             mv "{temp_directory}/{wildcards.sample}/$nii" "{temp_directory}/{wildcards.sample}/$nii_done"
 
