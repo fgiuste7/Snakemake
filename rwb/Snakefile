@@ -58,8 +58,9 @@ rule randomise:
         chunklist=`ls {input[niftidir]} | sed s/.nii.gz//`
         for nii in $chunklist
         do
-            if [ -d "{temp_directory}/{wildcards.sample}/$nii_done" ]
+            if [ -d "{temp_directory}/{wildcards.sample}/${{nii}}_done" ]
             then
+                echo "Found: {temp_directory}/{wildcards.sample}/${{nii}}_done; SKIPPING"
                 continue
             fi
 
@@ -74,7 +75,6 @@ rule randomise:
             docker exec neuroimaging_{wildcards.sample} python /code/processPermutations.py {temp_directory}/{wildcards.sample}/$nii {ncontrasts}
             echo 
 
-            echo mv "{temp_directory}/{wildcards.sample}/${{nii}}" "{temp_directory}/{wildcards.sample}/${{nii}}_done"
             mv "{temp_directory}/{wildcards.sample}/${{nii}}" "{temp_directory}/{wildcards.sample}/${{nii}}_done"
         done
 
