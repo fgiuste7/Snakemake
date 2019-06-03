@@ -37,7 +37,7 @@ DELETETEMP = [temp_directory+fname+"_deleted" for fname in FINISHEDTEMP]
 # Rules
 #-------------------------------------------------------------------------------
 rule all:
-    input: RANDOMISE[0:32] # tstat_directory+"_done"
+    input: RANDOMISE[0] # tstat_directory+"_done"
     shell:
         """
         echo "Finito";
