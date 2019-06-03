@@ -61,7 +61,6 @@ rule randomise:
         chunklist=`ls {input[niftidir]} | sed s/.nii.gz//`
         for nii in $chunklist
         do
-            
             if [ -d "{temp_directory}/{wildcards.sample}/$nii_done" ]
             then
                 continue
