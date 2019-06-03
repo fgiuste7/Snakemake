@@ -65,14 +65,14 @@ rule randomise:
             fi
 
             # Create Chunk directory:
-            mkdir -m777 -p {temp_directory}/{wildcards.sample}/$nii;
+            mkdir -m777 -p {temp_directory}/{wildcards.sample}/${{nii}};
 
             # Randomise on Chunk within Container:
-            run_randomise="randomise -i /data/$nii.nii.gz -o {temp_directory}/{wildcards.sample}/$nii/$nii -d /code/{design_matrix} -t /code/{contrast_matrix} -n {npermutations} -R -N -x --permout";
-            docker exec neuroimaging_{wildcards.sample} /bin/bash -c ". /home/startup.sh && $run_randomise"
+            run_randomise="randomise -i /data/${{nii}}.nii.gz -o {temp_directory}/{wildcards.sample}/${{nii}}/${{nii}} -d /code/{design_matrix} -t /code/{contrast_matrix} -n {npermutations} -R -N -x --permout";
+            docker exec neuroimaging_{wildcards.sample} /bin/bash -c ". /home/startup.sh && ${{run_randomise}}"
 
             # Permutation processing:
-            docker exec neuroimaging_{wildcards.sample} python /code/processPermutations.py {temp_directory}/{wildcards.sample}/$nii {ncontrasts}
+            docker exec neuroimaging_{wildcards.sample} python /code/processPermutations.py {temp_directory}/{wildcards.sample}/${{nii}} {ncontrasts}
             echo 
 
             mv "{temp_directory}/{wildcards.sample}/${{nii}}" "{temp_directory}/{wildcards.sample}/${{nii}}_done"
