@@ -72,8 +72,10 @@ rule randomise:
 
             # Permutation processing:
             docker exec neuroimaging_{wildcards.sample} python /code/processPermutations.py {temp_directory}/{wildcards.sample}/$nii {ncontrasts}
+            echo 
 
-            mv "{temp_directory}/{wildcards.sample}/$nii" "{temp_directory}/{wildcards.sample}/$nii_done"
+            echo mv "{temp_directory}/{wildcards.sample}/${{nii}}" "{temp_directory}/{wildcards.sample}/${{nii}}_done"
+            mv "{temp_directory}/{wildcards.sample}/${{nii}}" "{temp_directory}/{wildcards.sample}/${{nii}}_done"
         done
 
         # Shut down Container:
