@@ -52,9 +52,6 @@ rule randomise:
     output: randomise_directory+"/{sample}_done"
     shell:
         """
-        # Create randomise_directory/sample:
-        mkdir -m777 -p {randomise_directory}/{wildcards.sample}
-
         # Docker Container:
         docker run -t -d --rm -v {temp_directory}:{temp_directory}:rw -v {input[niftidir]}:/data:rw -v {model_directory}:/code:rw --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging;
         
@@ -77,14 +74,13 @@ rule randomise:
             docker exec neuroimaging_{wildcards.sample} python /code/processPermutations.py {temp_directory}/{wildcards.sample}/$nii {ncontrasts}
 
             mv "{temp_directory}/{wildcards.sample}/$nii" "{temp_directory}/{wildcards.sample}/$nii_done"
-
         done
 
         # Shut down Container:
         docker stop neuroimaging_{wildcards.sample}
 
         # Copy final output to randomise_directory/sample_done:
-        echo {temp_directory}/{wildcards.sample}
+        echo {output}
         mv {temp_directory}/{wildcards.sample} {output}
         """
 
