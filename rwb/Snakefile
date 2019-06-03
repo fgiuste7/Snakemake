@@ -141,7 +141,7 @@ rule T2Pvals:
     input:
     output:
     shell:
-    """
+        """
         # Create pval_directory:
         mkdir -m777 -p {pval_directory}
 
@@ -158,7 +158,7 @@ rule T2Pvals:
 
         # Rename tstat_directory to signify end:
         mv {tstat_directory} {output}
-    """
+        """
 
 # DELETE RANDOMISE OUTPUT:
 rule deleterandomise:
