@@ -8,14 +8,16 @@ import glob, os
 #-------------------------------------------------------------------------------
 # Constants
 #-------------------------------------------------------------------------------
-nifti_directory= "/mnt/gv0/FoxNiftis/"
+base_directory= "/mnt/gv0/"
+nifti_directory= base_directory+"/FoxNiftis/"
 temp_directory='/tmp_rwb/' # Output for randomise within Docker mapped onto Node filesystem
-randomise_directory= "/mnt/gv0/randomise" #"/HCP_Data/FG/fox_fullRes/randomise/" 
-tstat_directory= "/mnt/gv0/tstat/"
-model_directory = "/mnt/gv0/model/"
+randomise_directory= base_directory+"/randomise" #"/HCP_Data/FG/fox_fullRes/randomise/" 
+tstat_directory= base_directory+"/tstat"
+pval_directory= base_directory+"/pval"
+model_directory = "/home/fgiuste/Github/Snakemake/rwb/" # base_directory+"/model/"
 design_matrix = "group_comparison.mat"
 contrast_matrix = "group_comparison.con"
-npermutations = "5000"
+npermutations = "5" # TODO:5000
 ncontrasts="6"
 
 #-------------------------------------------------------------------------------
@@ -35,7 +37,7 @@ DELETETEMP = [temp_directory+fname+"_deleted" for fname in FINISHEDTEMP]
 # Rules
 #-------------------------------------------------------------------------------
 rule all:
-    input: RANDOMISE[0:32]
+    input: RANDOMISE[0:32] # tstat_directory+"_done"
     shell:
         """
         echo "Finito";
@@ -59,31 +61,52 @@ rule randomise:
         chunklist=`ls {input[niftidir]} | sed s/.nii.gz//`
         for nii in $chunklist
         do
+            
+            if [ -d "{temp_directory}/{wildcards.sample}/$nii_done" ]; then
+                continue
+            fi
+
             # Create Chunk directory:
             mkdir -m777 -p {temp_directory}/{wildcards.sample}/$nii;
 
             # Randomise on Chunk within Container:
             run_randomise="randomise -i /data/$nii.nii.gz -o {temp_directory}/{wildcards.sample}/$nii/$nii -d /code/{design_matrix} -t /code/{contrast_matrix} -n {npermutations} -R -N -x --permout";
             docker exec neuroimaging_{wildcards.sample} /bin/bash -c ". /home/startup.sh && $run_randomise"
+                
+            # Check for error:
+            if [ "$?" -ne 0 ]; then
+                echo "BAD RANDOMISE"
+                exit(777)
+            fi
 
             # Permutation processing:
             docker exec neuroimaging_{wildcards.sample} python /code/processPermutations.py {temp_directory}/{wildcards.sample}/$nii {ncontrasts}
+
+            # Check for error:
+            if [ "$?" -ne 0 ]; then
+                echo "BAD PERMUTATION PROCESSING"
+                exit(777)
+            fi
+
+            mv "{temp_directory}/{wildcards.sample}/$nii" "{temp_directory}/{wildcards.sample}/$nii_done"
+
         done
 
         # Shut down Container:
         docker stop neuroimaging_{wildcards.sample}
 
         # Copy final output to randomise_directory/sample_done:
-        mv {temp_directory}/{wildcards.sample} {output}
+        echo {temp_directory}/{wildcards.sample}
+        cp {temp_directory}/{wildcards.sample} {output}
         """
 
 
 rule randomiseRename:
     input: RANDOMISE[0:32]
-    output: randomise_directory+"_done"
+    output: randomise_directory+"_done" # The directory itself changes names
     shell:
         """
-        mv {randomise_directory} {output}
+        mv {randomise_directory} {output};
         echo "All Randomise Output Completed";
         """
 
@@ -92,7 +115,7 @@ rule randomiseRename:
 # sample: rowSlice
 rule mergeTstats:
     input:  randout= randomise_directory+"_done"
-    output: tstatout= tstat_directory+"/{sample}_done"
+    output: tstatout= tstat_directory+"_done" # The directory itself changes names
     shell:
         """
         # Create tstat_directory:
@@ -103,8 +126,8 @@ rule mergeTstats:
         # output -> tstat_directory
         docker run -t -d --rm -v {input[randout]}:/data:rw -v {tstat_directory}:/output:rw -v {model_directory}:/code:rw--name neuroimaging_mergeTstats fgiuste/neuroimaging;
         
-        # Permutation processing:
-        docker exec neuroimaging_mergeTstats python /code/processPermutations.py
+        # Permutation processing: randout, tstatout, ncontrasts
+        docker exec neuroimaging_mergeTstats python /code/mergeTstats.py /data/ /output/ {ncontrasts}
 
         # Shut down Container:
         docker stop neuroimaging_mergeTstats
@@ -113,6 +136,29 @@ rule mergeTstats:
         mv {tstat_directory} {output}
         """
 
+
+rule T2Pvals:
+    input:
+    output:
+    shell:
+    """
+        # Create pval_directory:
+        mkdir -m777 -p {pval_directory}
+
+        # Docker Container:
+        # data -> randout
+        # output -> tstat_directory
+        docker run -t -d --rm -v {input[randout]}:/data:rw -v {tstat_directory}:/output:rw -v {model_directory}:/code:rw--name neuroimaging_T2Pval fgiuste/neuroimaging;
+        
+        # Permutation processing: randout, tstatout, ncontrasts
+        docker exec neuroimaging_mergeTstats python /code/mergeTstats.py /data/ /output/ {ncontrasts}
+
+        # Shut down Container:
+        docker stop neuroimaging_T2Pval
+
+        # Rename tstat_directory to signify end:
+        mv {tstat_directory} {output}
+    """
 
 # DELETE RANDOMISE OUTPUT:
 rule deleterandomise:
@@ -139,6 +185,7 @@ rule deletedeletedelete:
 # TODO: create slurm job config file to specify ntasks=1,c=1, manually override for larger jobs
 
 # RUN:
+# cp ~/Github/Snakemake/rwb/*.py 
 # snakemake --jobs 500 --cluster "sbatch -p SMIs -J 'rwbSMIs' --ntasks=1 --cpus-per-task=1 --mem=500M"
 
 

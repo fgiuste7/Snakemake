@@ -110,3 +110,6 @@ find . -type d ! -name '*_done' -delete
 
 # Get Processes using specified port:
 lsof -i:${PortNumber}
+
+# Grep first instance +/- 5 lines:
+grep -A 5 -B 5 -m1 'Exiting' slurm-180*

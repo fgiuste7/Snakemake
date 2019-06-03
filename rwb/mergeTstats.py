@@ -3,7 +3,7 @@
 
 ### Command Line Argument Processing ###
 import sys
-print(sys.argv)
+print(sys.argv) # Index 0 lists all arguments
 if(len(sys.argv) == 4):
     randout = sys.argv[1]
     tstatout = sys.argv[2]
@@ -31,7 +31,7 @@ def mergeTstats(randout, tstatout, contrast):
     import numpy as np
     from glob import glob
     import re, zarr
-    zarrf= '%s/TestTs_%s.zarr' % (tstatout, contrast)
+    zarrf= '%s/TestTval_%s.zarr' % (tstatout, contrast)
     print('Merging Test-T Values from contrast: %s' % contrast) 
     
     # randomise results: randout/rowSlice/chunk/chunk*
