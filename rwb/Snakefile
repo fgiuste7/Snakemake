@@ -125,7 +125,7 @@ rule mergeTstats:
 # TODO
 rule T2Pvals:
     input: tstatout= tstat_directory+"_done"
-    output: pvalout= pval_directory+"_done"
+    output: pvalout= pval_directory+"_done" # The directory itself changes names
     shell:
         """
         # Create pval_directory:
@@ -134,10 +134,10 @@ rule T2Pvals:
         # Docker Container:
         # data -> randout
         # output -> tstat_directory
-        docker run -t -d --rm -v {input[randout]}:/data:rw -v {tstat_directory}:/output:rw -v {model_directory}:/code:rw--name neuroimaging_T2Pval fgiuste/neuroimaging;
+        docker run -t -d --rm -v {input[tstatout]}:/data:rw -v {pval_directory}:/output:rw -v {model_directory}:/code:rw--name neuroimaging_T2Pval fgiuste/neuroimaging;
         
         # Permutation processing: randout, tstatout, ncontrasts
-        docker exec neuroimaging_mergeTstats python /code/mergeTstats.py /data/ /output/ {ncontrasts}
+        docker exec neuroimaging_T2Pval python /code/T2Pvals.py /data/ /output/ {ncontrasts}
 
         # Shut down Container:
         docker stop neuroimaging_T2Pval
