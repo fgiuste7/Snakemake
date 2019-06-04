@@ -102,7 +102,7 @@ rule randomise:
 # sample: rowSlice
 rule mergeTstats:
     input:  rules.randomise.output,
-            randout= randomise_directory #+"_done"
+            randout= randomise_directory
     output: tstatout= tstat_directory+"_done" # The directory itself changes names
     shell:
         """
@@ -126,7 +126,7 @@ rule mergeTstats:
 
 # TODO
 rule mergeNullTstats:
-    input:  randout= randomise_directory+"_done"
+    input:  randout= randomise_directory
     output: nulltstatout= nulltstat_directory+"_done" # The directory itself changes names
     shell:
         """
