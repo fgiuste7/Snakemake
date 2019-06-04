@@ -101,7 +101,7 @@ rule randomise:
 # Merges tstat files from {randomise_directory}: Starts Container=neuroimaging_{wildcards.sample}
 # sample: rowSlice
 rule mergeTstats:
-    input:  rule.randomise.output,
+    input:  rules.randomise.output,
             randout= randomise_directory #+"_done"
     output: tstatout= tstat_directory+"_done" # The directory itself changes names
     shell:
