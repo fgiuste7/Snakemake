@@ -110,7 +110,7 @@ rule mergeTstats:
         # Docker Container:
         # data -> randout
         # output -> tstat_directory
-        docker run -t -d --rm -v {input[randout]}:/data:rw -v {tstat_directory}:/output:rw -v {model_directory}:/code:rw--name neuroimaging_mergeTstats fgiuste/neuroimaging;
+        docker run -t -d --rm -v {input[randout]}:/data:rw -v {tstat_directory}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_mergeTstats fgiuste/neuroimaging;
         
         # Permutation processing: randout, tstatout, ncontrasts
         docker exec neuroimaging_mergeTstats python /code/mergeTstats.py /data/ /output/ {ncontrasts}
