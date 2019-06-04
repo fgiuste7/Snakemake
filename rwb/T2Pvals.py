@@ -1,12 +1,14 @@
 # T2Pvals(tstatout, ncontrasts): Calculate voxel-wise corrected P-Value
 # By: Felipe Giuste
 
+import numpy as np
+
 ### Command Line Argument Processing ###
 import sys
 print(sys.argv) # Index 0 lists all arguments
 if(len(sys.argv) == 4):
     tstatout = sys.argv[1]
-    output_dir = sys.argv[2]
+    pval_dir = sys.argv[2]
     ncontrasts = int(sys.argv[3])
     print("tstatout: %s"%(tstatout,))
     print("randout: %s"%(randout,))
@@ -31,14 +33,14 @@ def getAlpha(x, qtable):
 
 getAlpha_vect = np.vectorize(getAlpha, excluded=('qtable',))
 
-def T2Pvals(tstatout, output_dir, ncontrasts):
+def T2Pvals(tstatout, pval_dir, ncontrasts):
     import numpy as np
     import dask.array as da
     import zarr
 
     for contrast in range(1, ncontrasts+1):
         # open zarr file containing Test T-values
-        testTs = da.from_zarr('%s/TestTval%s.zarr' % (tstatout, contrast))
+        testTs = da.from_zarr('%s/TestTval_%s.zarr' % (tstatout, contrast))
         nullTs = np.genfromtxt('%s/NullTCounter_%s.csv' %
                                (tstatout, contrast))
 
@@ -74,7 +76,7 @@ def T2Pvals(tstatout, output_dir, ncontrasts):
         print('contrast: %s' % contrast)
         print('p_values: %s' % p_values)
         # Create zarr file to hold p-values:
-        pstore_path = '%s/corrPvals_%s.zarr' % (output_dir, contrast)
+        pstore_path = '%s/corrPvals_%s.zarr' % (pval_dir, contrast)
         pstore = zarr.create(shape=testTs.shape,
                              dtype=float,
                              store=pstore_path)
@@ -82,7 +84,7 @@ def T2Pvals(tstatout, output_dir, ncontrasts):
         p_values.to_zarr(pstore)
         print('P-Values Stored: %s' % pstore_path)
 
-T2Pvals(tstatout=tstatout, output_dir=output_dir, ncontrasts=ncontrasts)
+T2Pvals(tstatout=tstatout, pval_dir=pval_dir, ncontrasts=ncontrasts)
 
 
 

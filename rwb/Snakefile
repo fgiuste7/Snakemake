@@ -13,6 +13,7 @@ nifti_directory= base_directory+"/FoxNiftis/"
 temp_directory='/tmp_rwb/' # Output for randomise within Docker mapped onto Node filesystem
 randomise_directory= base_directory+"/randomise" #"/HCP_Data/FG/fox_fullRes/randomise/" 
 tstat_directory= base_directory+"/tstat"
+nulltstat_directory= base_directory+"/nulltstat"
 pval_directory= base_directory+"/pval"
 model_directory = "/home/fgiuste/Github/Snakemake/rwb/" # base_directory+"/model/"
 design_matrix = "group_comparison.mat"
@@ -123,8 +124,33 @@ rule mergeTstats:
         """
 
 # TODO
+rule mergeNullTstats:
+    input:  randout= randomise_directory+"_done"
+    output: nulltstatout= nulltstat_directory+"_done" # The directory itself changes names
+    shell:
+        """
+        # Create nulltstat_directory:
+        mkdir -m777 -p {nulltstat_directory}
+
+        # Docker Container:
+        # data -> randout
+        # output -> nulltstat_directory
+        docker run -t -d --rm -v {input[randout]}:/data:rw -v {nulltstat_directory}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_mergeNullTstats fgiuste/neuroimaging;
+        
+        # Permutation processing: randout, tstatout, ncontrasts
+        docker exec neuroimaging_mergeNullTstats python /code/mergeNullTstats.py /data/ /output/ {ncontrasts}
+
+        # Shut down Container:
+        docker stop neuroimaging_mergeNullTstats
+
+        # Rename nulltstat_directory to signify end:
+        mv {nulltstat_directory} {output}
+        """
+
+# TODO
 rule T2Pvals:
-    input: tstatout= tstat_directory+"_done"
+    input:  tstatout= tstat_directory+"_done",
+            nulltstatout= nulltstat_directory+"_done"
     output: pvalout= pval_directory+"_done" # The directory itself changes names
     shell:
         """
@@ -132,8 +158,8 @@ rule T2Pvals:
         mkdir -m777 -p {pval_directory}
 
         # Docker Container:
-        # data -> randout
-        # output -> tstat_directory
+        # data -> tstatout
+        # output -> pval_directory
         docker run -t -d --rm -v {input[tstatout]}:/data:rw -v {pval_directory}:/output:rw -v {model_directory}:/code:rw--name neuroimaging_T2Pval fgiuste/neuroimaging;
         
         # Permutation processing: randout, tstatout, ncontrasts
@@ -145,6 +171,10 @@ rule T2Pvals:
         # Rename tstat_directory to signify end:
         mv {pval_directory} {output}
         """
+
+
+
+
 
 # DELETE RANDOMISE OUTPUT:
 rule deleterandomise:
