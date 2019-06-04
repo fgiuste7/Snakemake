@@ -122,10 +122,10 @@ rule mergeTstats:
         mv {tstat_directory} {output}
         """
 
-
+# TODO
 rule T2Pvals:
-    input:
-    output:
+    input: tstatout= tstat_directory+"_done"
+    output: pvalout= pval_directory+"_done"
     shell:
         """
         # Create pval_directory:
@@ -143,7 +143,7 @@ rule T2Pvals:
         docker stop neuroimaging_T2Pval
 
         # Rename tstat_directory to signify end:
-        mv {tstat_directory} {output}
+        mv {pval_directory} {output}
         """
 
 # DELETE RANDOMISE OUTPUT:
