@@ -19,11 +19,8 @@ else:
 # randout: Randomise nulltstatout directory
 # nulltstatout: nulltstatout
 def NullTmerge(contrast, randout, nulltstatout):
-    import glob
     import numpy as np
-    import re
-    import os
-    import csv
+    import re, os, csv, glob
     from collections import Counter
 
     try:
