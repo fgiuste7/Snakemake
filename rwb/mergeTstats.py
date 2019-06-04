@@ -40,7 +40,7 @@ def mergeTstats(randout, tstatout, contrast):
     filedict= {}
     for ifile in testTs:
         # RowStart-RowEnd_ColStart-ColEnd (inclusive)
-        research= re.search( '.*/(.*?)-(.*?)_(.*?)-(.*?)/', ifile )
+        research= re.search( '.*/(.*?)-(.*?)_(.*?)-(.*?)_done/', ifile )
         chunk_coords= [research.group(1), research.group(2), research.group(3), research.group(4)]
         chunk_coords= [int(k) for k in chunk_coords]
         filedict[ifile]= chunk_coords
