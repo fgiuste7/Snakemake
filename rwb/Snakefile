@@ -27,7 +27,7 @@ ncontrasts="6"
 # SAMPLES: Folder name containing niftis for a row (128 Sources):
 SAMPLES = [fname.split('/')[-1].split('.nii')[0] for fname in glob.glob('%s/*'%nifti_directory)]
 # CONTRASTS: List of contrast integers as string:
-CONTRASTS = list(range(1,ncontrasts+1))
+CONTRASTS = [ str(i) for i in range(1,ncontrasts+1) ]
 
 
 # Rowslices Randomise output:
