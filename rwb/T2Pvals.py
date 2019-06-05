@@ -6,15 +6,17 @@ import numpy as np
 ### Command Line Argument Processing ###
 import sys
 print(sys.argv) # Index 0 lists all arguments
-if(len(sys.argv) == 4):
+if(len(sys.argv) == 5):
     tstatout = sys.argv[1]
-    pval_dir = sys.argv[2]
-    ncontrasts = int(sys.argv[3])
+    nulltstatout = sys.argv[2]
+    pval_dir = sys.argv[3]
+    ncontrasts = int(sys.argv[4])
     print("tstatout: %s"%(tstatout,))
-    print("randout: %s"%(randout,))
+    print("nulltstatout: %s"%(nulltstatout,))
+    print("pval_dir: %s"%(pval_dir,))
     print("ncontrasts: %s"%(ncontrasts,))
 else:
-    print("Incorrect number of arguments, should be 3\nWas: %s" % (len(sys.argv)-1))
+    print("Incorrect number of arguments, should be 4\nWas: %s" % (len(sys.argv)-1))
     exit()
 
 # x: test T-value
@@ -33,7 +35,7 @@ def getAlpha(x, qtable):
 
 getAlpha_vect = np.vectorize(getAlpha, excluded=('qtable',))
 
-def T2Pvals(tstatout, pval_dir, ncontrasts):
+def T2Pvals(tstatout, nulltstatout, pval_dir, ncontrasts):
     import numpy as np
     import dask.array as da
     import zarr
@@ -41,8 +43,7 @@ def T2Pvals(tstatout, pval_dir, ncontrasts):
     for contrast in range(1, ncontrasts+1):
         # open zarr file containing Test T-values
         testTs = da.from_zarr('%s/TestTval_%s.zarr' % (tstatout, contrast))
-        nullTs = np.genfromtxt('%s/NullTCounter_%s.csv' %
-                               (tstatout, contrast))
+        nullTs = np.genfromtxt('%s/NullTCounter_%s.csv' % (nulltstatout, contrast))
 
         # Process NullTs:
         # remove NullTs <= 0
@@ -84,7 +85,7 @@ def T2Pvals(tstatout, pval_dir, ncontrasts):
         p_values.to_zarr(pstore)
         print('P-Values Stored: %s' % pstore_path)
 
-T2Pvals(tstatout=tstatout, pval_dir=pval_dir, ncontrasts=ncontrasts)
+T2Pvals(tstatout=tstatout, nulltstatout=nulltstatout, pval_dir=pval_dir, ncontrasts=ncontrasts)
 
 
 
