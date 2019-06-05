@@ -44,6 +44,8 @@ DELETE_TEMP = [temp_directory+fname+"_deleted" for fname in FINISHED_TEMP]
 #-------------------------------------------------------------------------------
 # Rules
 #-------------------------------------------------------------------------------
+localrules: all, T2Pvals
+
 rule all:
     input: T2P 
     shell:
@@ -98,8 +100,7 @@ rule randomise:
 # Merges Test tstat files from {randomise_directory}: Starts Container=neuroimaging_mergeTstats
 # sample: rowSlice
 rule mergeTstats:
-    input:  RANDOMISE[0],
-            randout= randomise_directory
+    input:  RANDOMISE,
     output: tstatout= TSTAT
     shell:
         """
@@ -109,7 +110,7 @@ rule mergeTstats:
         # Docker Container:
         # data -> randout
         # output -> tstat_directory
-        docker run -t -d --rm -v {input[randout]}:/data:rw -v {tstat_directory}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_mergeTstats fgiuste/neuroimaging;
+        docker run -t -d --rm -v {randomise_directory}:/data:rw -v {tstat_directory}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_mergeTstats fgiuste/neuroimaging;
         
         # Permutation processing: randout, tstatout, ncontrasts
         docker exec neuroimaging_mergeTstats python /code/mergeTstats.py /data/ /output/ {ncontrasts}
@@ -124,7 +125,7 @@ rule mergeTstats:
 
 # Merges Null-Distribution tstat files across chunks: Starts Container=mergeNullTstats
 rule mergeNullTstats:
-    input:  randout= randomise_directory
+    input:  RANDOMISE,
     output: nulltstatout= NULLTSTAT
     shell:
         """
@@ -134,7 +135,7 @@ rule mergeNullTstats:
         # Docker Container:
         # data -> randout
         # output -> nulltstat_directory
-        docker run -t -d --rm -v {input[randout]}:/data:rw -v {nulltstat_directory}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_mergeNullTstats fgiuste/neuroimaging;
+        docker run -t -d --rm -v {randomise_directory}:/data:rw -v {nulltstat_directory}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_mergeNullTstats fgiuste/neuroimaging;
         
         # NullTmerge: randout, nulltstat_directory, ncontrasts
         docker exec neuroimaging_mergeNullTstats python /code/mergeNullTstats.py /data/ /output/ {ncontrasts}
@@ -148,6 +149,7 @@ rule mergeNullTstats:
 
 
 # Converts Test T-values into corrected P-values using Null-Distribution T-values
+# Runs locally utilizing Dask via Slurm
 rule T2Pvals:
     input:  tstatout= TSTAT,
             nulltstatout= NULLTSTAT
@@ -157,16 +159,8 @@ rule T2Pvals:
         # Create pval_directory:
         mkdir -m777 -p {pval_directory}
 
-        # Docker Container:
-        # data -> tstatout
-        # output -> pval_directory
-        docker run -t -d --rm -v {input[tstatout]}:/data:rw -v {pval_directory}:/output:rw -v {model_directory}:/code:rw--name neuroimaging_T2Pval fgiuste/neuroimaging;
-        
         # T2Pvals: tstatout, pval_directory, ncontrasts
-        docker exec neuroimaging_T2Pval python /code/T2Pvals.py /data/ /output/ {ncontrasts}
-
-        # Shut down Container:
-        docker stop neuroimaging_T2Pval
+        python {model_directory}/T2Pvals.py {input[tstatout]} {pval_directory} {ncontrasts}
 
         # Rename pval_directory to signify end:
         mv {pval_directory} {output}
