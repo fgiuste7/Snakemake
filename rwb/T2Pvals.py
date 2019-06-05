@@ -40,6 +40,25 @@ def T2Pvals(tstatout, nulltstatout, pval_dir, ncontrasts):
     import dask.array as da
     import zarr
 
+    #import dask_jobqueue.slurm as SLURM
+    from dask_jobqueue.slurm import SLURMCluster
+    from dask.distributed import Client
+
+    # Slurm output to current working directory
+    cluster = SLURMCluster(
+        queue='HPG7s', # -p
+        project= "dask_test", # -J
+        cores=24, # --cpus-per-task
+        memory="60GB", # --mem
+        walltime='2190:00:00', # 3 months
+        death_timeout=120,
+        dashboard_address="http://170.140.138.165:8787", # doc-manager:8787
+    )
+
+    cluster.scale(10) # Number of workers (Nodes in a Dask cluster, not necessarily real Nodes)
+
+    client = Client(cluster)
+
     for contrast in range(1, ncontrasts+1):
         # open zarr file containing Test T-values
         testTvals = da.from_zarr('%s/TestTval_%s.zarr' % (tstatout, contrast))

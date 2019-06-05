@@ -29,10 +29,14 @@ SAMPLES = [fname.split('/')[-1].split('.nii')[0] for fname in glob.glob('%s/*'%n
 # Rowslices Randomise output:
 RANDOMISE = expand(randomise_directory+"/{sample}_done", sample = SAMPLES)
 # Finished Test T-Statistic Merging across chunks:
-TSTAT = tstat_directory+"_done"
+TSTAT = expand(tstat_directory+"/TestTval_{contrast}.zarr", contrast = list(range(1,ncontrasts+1)))
+# TSTAT = tstat_directory+"_done"
 # Finished Null T-Statistic Merging across chunks:
-NULLTSTAT = nulltstat_directory+"_done"
-T2P = pval_directory+"_done"
+NULLTSTAT = expand(nulltstat_directory+"/NullTCounter_{contrast}.csv", contrast = list(range(1,ncontrasts+1)))
+# NULLTSTAT = nulltstat_directory+"_done"
+# Finished pvalue zarr files:
+T2P = expand(pval_directory+"/corrPvals_{contrast}.zarr", contrast = list(range(1,ncontrasts+1)))
+# T2P = pval_directory+"_done"
 
 
 FINISHED_RANDOMISE = [fname.split('/')[-1] for fname in glob.glob('%s/*'%randomise_directory)]
@@ -59,7 +63,7 @@ rule all:
 # nii: chunk
 rule randomise:
     input: niftidir= nifti_directory+"/{sample}"
-    output: randomise_directory+"/{sample}_done"
+    output: randomise_directory+"/{sample}_done" # RANDOMISE
     shell:
         """
         # Docker Container:
@@ -101,7 +105,7 @@ rule randomise:
 # sample: rowSlice
 rule mergeTstats:
     input:  RANDOMISE,
-    output: tstatout= TSTAT
+    output: tstatout= tstat_directory+"/TestTval_{contrast}.zarr" # TSTAT
     shell:
         """
         # Create tstat_directory:
