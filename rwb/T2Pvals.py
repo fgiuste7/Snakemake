@@ -44,8 +44,9 @@ def T2Pvals(tstatout, nulltstatout, pval_dir, contrast):
     from dask_jobqueue.slurm import SLURMCluster
     from dask.distributed import Client
 
+    print('Hello_1')
+
     # Slurm output to current working directory
-    # STOPPED HERE: instead of running locally, run on single nodes?
     cluster = SLURMCluster(
         queue='HPG7s', # -p
         project= "dask_test_"+contrast, # -J
@@ -55,6 +56,8 @@ def T2Pvals(tstatout, nulltstatout, pval_dir, contrast):
         death_timeout=120,
         dashboard_address="http://170.140.138.165:8787", # doc-manager:8787
     )
+
+    print('Hello_2')
 
     cluster.scale(10) # Number of workers (Nodes in a Dask cluster, not necessarily real Nodes)
 
