@@ -161,7 +161,7 @@ rule mergeNullTstats:
 rule T2Pvals:
     input:  tstatout= tstat_directory+"/TestTval_{contrast}.zarr", #TSTAT,
             nulltstatout= nulltstat_directory+"/NullTCounter_{contrast}.csv" # NULLTSTAT
-    output: pvalout= T2P #pval_directory+"/corrPvals_{contrast}.zarr" # T2P
+    output: pvalout= pval_directory+"/corrPvals_{contrast}.zarr" # T2P
     shell:
         """
         # Create pval_directory:
