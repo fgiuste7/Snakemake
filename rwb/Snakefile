@@ -109,7 +109,7 @@ rule randomise:
 # sample: rowSlice
 rule mergeTstats:
     input:  RANDOMISE[0],
-    output: tstatout= tstat_directory+"/TestTval_{contrast}.zarr" # TSTAT
+    output: tstatout= TSTAT #tstat_directory+"/TestTval_{contrast}.zarr" # TSTAT
     shell:
         """
         # Create tstat_directory:
@@ -134,7 +134,7 @@ rule mergeTstats:
 # Merges Null-Distribution tstat files across chunks: Starts Container=mergeNullTstats
 rule mergeNullTstats:
     input:  RANDOMISE[0],
-    output: nulltstatout= nulltstat_directory+"/NullTCounter_{contrast}.csv" # NULLTSTAT
+    output: nulltstatout= NULLTSTAT # nulltstat_directory+"/NullTCounter_{contrast}.csv" # NULLTSTAT
     shell:
         """
         # Create nulltstat_directory:
@@ -159,9 +159,9 @@ rule mergeNullTstats:
 # Converts Test T-values into corrected P-values using Null-Distribution T-values
 # Runs locally utilizing Dask via Slurm
 rule T2Pvals:
-    input:  tstatout= TSTAT,
-            nulltstatout= NULLTSTAT
-    output: pvalout= pval_directory+"/corrPvals_{contrast}.zarr" # T2P
+    input:  tstatout= tstat_directory+"/TestTval_{contrast}.zarr" #TSTAT,
+            nulltstatout= nulltstat_directory+"/NullTCounter_{contrast}.csv" # NULLTSTAT
+    output: pvalout= T2P #pval_directory+"/corrPvals_{contrast}.zarr" # T2P
     shell:
         """
         # Create pval_directory:
