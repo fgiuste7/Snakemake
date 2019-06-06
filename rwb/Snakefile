@@ -29,18 +29,14 @@ SAMPLES = [fname.split('/')[-1].split('.nii')[0] for fname in glob.glob('%s/*'%n
 # CONTRASTS: List of contrast integers as string:
 CONTRASTS = [ str(i) for i in range(1,ncontrasts+1) ]
 
-
 # Rowslices Randomise output:
 RANDOMISE = expand(randomise_directory+"/{sample}_done", sample = SAMPLES)
 # Finished Test T-Statistic Merging across chunks:
 TSTAT = expand(tstat_directory+"/TestTval_{contrast}.zarr", contrast = CONTRASTS)
-# TSTAT = tstat_directory+"_done"
 # Finished Null T-Statistic Merging across chunks:
 NULLTSTAT = expand(nulltstat_directory+"/NullTCounter_{contrast}.csv", contrast = CONTRASTS)
-# NULLTSTAT = nulltstat_directory+"_done"
 # Finished pvalue zarr files:
 T2P = expand(pval_directory+"/corrPvals_{contrast}.zarr", contrast = CONTRASTS)
-# T2P = pval_directory+"_done"
 
 
 FINISHED_RANDOMISE = [fname.split('/')[-1] for fname in glob.glob('%s/*'%randomise_directory)]
@@ -55,7 +51,7 @@ DELETE_TEMP = [temp_directory+fname+"_deleted" for fname in FINISHED_TEMP]
 localrules: all, T2Pvals
 
 rule all:
-    input: T2P
+    input: T2P[0]
     shell:
         """
         echo "Finito";
