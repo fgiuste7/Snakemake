@@ -55,7 +55,7 @@ DELETE_TEMP = [temp_directory+fname+"_deleted" for fname in FINISHED_TEMP]
 localrules: all, T2Pvals
 
 rule all:
-    input: RANDOMISE[0] # T2P
+    input: T2P
     shell:
         """
         echo "Finito";
