@@ -7,10 +7,10 @@ print(sys.argv) # Index 0 lists all arguments
 if(len(sys.argv) == 4):
     randout = sys.argv[1]
     nulltstatout = sys.argv[2]
-    ncontrasts = int(sys.argv[3])
+    contrast = int(sys.argv[3])
     print("randout: %s"%(randout,))
     print("nulltstatout: %s"%(nulltstatout,))
-    print("ncontrasts: %s"%(ncontrasts,))
+    print("contrast: %s"%(contrast,))
 else:
     print("Incorrect number of arguments, should be 3\nWas: %s" % (len(sys.argv)-1))
     exit()
@@ -51,5 +51,4 @@ def NullTmerge(contrast, randout, nulltstatout):
 
 
 # Run NullTMerge:
-for contrast in range(1, ncontrasts+1):
-    NullTmerge(contrast, randout=randout, nulltstatout=nulltstatout)
+NullTmerge(contrast=contrast, randout=randout, nulltstatout=nulltstatout)

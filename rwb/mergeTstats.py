@@ -7,10 +7,10 @@ print(sys.argv) # Index 0 lists all arguments
 if(len(sys.argv) == 4):
     randout = sys.argv[1]
     tstatout = sys.argv[2]
-    ncontrasts = int(sys.argv[3])
+    contrast = int(sys.argv[3])
     print("randout: %s"%(randout,))
     print("tstatout: %s"%(tstatout,))
-    print("ncontrasts: %s"%(ncontrasts,))
+    print("contrast: %s"%(contrast,))
 else:
     print("Incorrect number of arguments, should be 3\nWas: %s" % (len(sys.argv)-1))
     exit()
@@ -35,7 +35,7 @@ def mergeTstats(randout, tstatout, contrast):
     print('Merging Test-T Values from contrast: %s' % contrast) 
     
     # randomise results: randout/rowSlice/chunk/chunk*
-    # TODO: This line seems Ram heavy:
+    # TODO: This line seems RAM heavy:
     testTvals= glob( '%s/*/*/*[0-9]_tstat%s.nii.gz' % (randout, contrast))
     
     # key: tstat filename
@@ -69,5 +69,4 @@ def mergeTstats(randout, tstatout, contrast):
 
 
 # Merge test T-statistic files across chunks into single file for a contrast:
-for contrast in range(1,ncontrasts+1):
-    mergeTstats(randout, tstatout, contrast)
+mergeTstats(randout=randout, tstatout=tstatout, contrast=contrast)
