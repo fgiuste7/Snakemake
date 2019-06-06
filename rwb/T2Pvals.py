@@ -45,6 +45,7 @@ def T2Pvals(tstatout, nulltstatout, pval_dir, contrast):
     from dask.distributed import Client
 
     # Slurm output to current working directory
+    # STOPPED HERE: instead of running locally, run on single nodes?
     cluster = SLURMCluster(
         queue='HPG7s', # -p
         project= "dask_test_"+contrast, # -J
