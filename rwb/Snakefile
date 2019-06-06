@@ -109,7 +109,7 @@ rule mergeTstats:
     shell:
         """
         # Create tstat_directory:
-        mkdir -m777 -p {tstat_directory}
+        mkdir -p {tstat_directory} && chmod 777 -R {tstat_directory}
 
         # Docker Container:
         # data -> randout
@@ -122,8 +122,7 @@ rule mergeTstats:
         # Shut down Container:
         docker stop neuroimaging_mergeTstats
 
-        # Rename tstat_directory to signify end:
-        #mv {tstat_directory} {output}
+        chmod 755 -R {tstat_directory}
         """
 
 
@@ -134,7 +133,7 @@ rule mergeNullTstats:
     shell:
         """
         # Create nulltstat_directory:
-        mkdir -m777 -p {nulltstat_directory}
+        mkdir -p {nulltstat_directory} && chmod 777 -R {nulltstat_directory}
 
         # Docker Container:
         # data -> randout
@@ -147,8 +146,8 @@ rule mergeNullTstats:
         # Shut down Container:
         docker stop neuroimaging_mergeNullTstats
 
-        # Rename nulltstat_directory to signify end:
-        #mv {nulltstat_directory} {output}
+        chmod 755 -R {nulltstat_directory}
+
         """
 
 
@@ -162,13 +161,12 @@ rule T2Pvals:
     shell:
         """
         # Create pval_directory:
-        mkdir -m777 -p {pval_directory}
+        mkdir -p {pval_directory} && chmod 777 -R {pval_directory}
 
         # T2Pvals: tstatout, pval_directory, ncontrasts
         python {model_directory}/T2Pvals.py {tstat_directory} {nulltstat_directory} {pval_directory} {wildcards.contrast}
 
-        # Rename pval_directory to signify end:
-        #mv {pval_directory} {output}
+        chmod 755 -R {pval_directory}
         """
 
 
