@@ -51,7 +51,7 @@ DELETE_TEMP = [temp_directory+fname+"_deleted" for fname in FINISHED_TEMP]
 localrules: all, T2Pvals
 
 rule all:
-    input: T2P[0]
+    input: T2P
     shell:
         """
         echo "Finito";
@@ -104,7 +104,7 @@ rule randomise:
 # Merges Test tstat files from {randomise_directory}: Starts Container=neuroimaging_mergeTstats
 # sample: rowSlice
 rule mergeTstats:
-    input:  RANDOMISE[0],
+    input:  RANDOMISE[0:10],
     output: tstatout= TSTAT #tstat_directory+"/TestTval_{contrast}.zarr" # TSTAT
     shell:
         """
@@ -129,7 +129,7 @@ rule mergeTstats:
 
 # Merges Null-Distribution tstat files across chunks: Starts Container=mergeNullTstats
 rule mergeNullTstats:
-    input:  RANDOMISE[0]
+    input:  RANDOMISE[0:10]
     output: nulltstatout= NULLTSTAT # nulltstat_directory+"/NullTCounter_{contrast}.csv" # NULLTSTAT
     shell:
         """
