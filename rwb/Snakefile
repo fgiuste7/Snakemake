@@ -156,6 +156,7 @@ rule mergeNullTstats:
         """
 
 
+# 
 # Converts Test T-values into corrected P-values using Null-Distribution T-values
 # Runs locally utilizing Dask via Slurm
 rule T2Pvals:
@@ -168,7 +169,7 @@ rule T2Pvals:
         mkdir -m777 -p {pval_directory}
 
         # T2Pvals: tstatout, pval_directory, ncontrasts
-        python {model_directory}/T2Pvals.py {input[tstatout]} {input[nulltstatout]} {pval_directory} {ncontrasts}
+        python {model_directory}/T2Pvals.py {tstat_directory} {nulltstat_directory} {pval_directory} {ncontrasts}
 
         # Rename pval_directory to signify end:
         #mv {pval_directory} {output}
