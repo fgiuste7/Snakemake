@@ -133,7 +133,7 @@ rule mergeTstats:
 
 # Merges Null-Distribution tstat files across chunks: Starts Container=mergeNullTstats
 rule mergeNullTstats:
-    input:  RANDOMISE[0],
+    input:  RANDOMISE[0]
     output: nulltstatout= NULLTSTAT # nulltstat_directory+"/NullTCounter_{contrast}.csv" # NULLTSTAT
     shell:
         """
@@ -159,7 +159,7 @@ rule mergeNullTstats:
 # Converts Test T-values into corrected P-values using Null-Distribution T-values
 # Runs locally utilizing Dask via Slurm
 rule T2Pvals:
-    input:  tstatout= tstat_directory+"/TestTval_{contrast}.zarr" #TSTAT,
+    input:  tstatout= tstat_directory+"/TestTval_{contrast}.zarr", #TSTAT,
             nulltstatout= nulltstat_directory+"/NullTCounter_{contrast}.csv" # NULLTSTAT
     output: pvalout= T2P #pval_directory+"/corrPvals_{contrast}.zarr" # T2P
     shell:
