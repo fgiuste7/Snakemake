@@ -49,7 +49,7 @@ def T2Pvals(tstatout, nulltstatout, pval_dir, contrast):
     # Slurm output to current working directory
     cluster = SLURMCluster(
         queue='HPG7s', # -p
-        project= "dask_test_"+contrast, # -J
+        project= "dask_test_"+str(contrast), # -J
         cores=24, # --cpus-per-task
         memory="60GB", # --mem
         walltime='2190:00:00', # 3 months
