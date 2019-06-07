@@ -18,7 +18,7 @@ pval_directory= base_directory+"/pval"
 model_directory = "/home/fgiuste/Github/Snakemake/rwb/" # base_directory+"/model/"
 design_matrix = "group_comparison.mat"
 contrast_matrix = "group_comparison.con"
-npermutations = "5" # TODO:5000
+npermutations = "5000"
 ncontrasts=6
 
 #-------------------------------------------------------------------------------
