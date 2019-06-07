@@ -43,6 +43,7 @@ def NullTmerge(contrast, randout, nulltstatout):
         counterF = counterF + countertmp
 
     # Save counterF to randout directory as 'nulltstatout/NullTCounter_contrast.csv';
+    print('Saving: %s/NullTCounter_%s.csv' % (nulltstatout, contrast))
     with open('%s/NullTCounter_%s.csv' % (nulltstatout, contrast), 'w') as csvfile:
         writer = csv.writer(csvfile, delimiter='\t')
         for key, value in counterF.items():
