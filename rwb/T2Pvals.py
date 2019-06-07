@@ -52,7 +52,7 @@ def T2Pvals(tstatout, nulltstatout, pval_dir, contrast):
         memory="60GB", # --mem
         walltime='2190:00:00', # 3 months
         death_timeout=120,
-        dashboard_address="http://170.140.138.165:8787", # doc-manager:8787
+        #dashboard_address="http://170.140.138.165:8787", # doc-manager:8787
     )
 
     # 24 Cores, 60GB RAM

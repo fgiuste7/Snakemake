@@ -88,8 +88,8 @@ sbatch --test-only myscript.sh
 sacct -j ${Job_ID} --format=JobID,JobName,MaxRSS,Elapsed
 
 # Show job resource usage:
-#squeue -o '%.5i %.2t %.4M %.5D %7H %6I %7J %6z %R'
-squeue -o '%.5i    %.2t    %.4M    %.5D    %R'
+# https://slurm.schedmd.com/squeue.html
+squeue -o "%5i %2t %4M %5D %8R  %3C %20e %15j"
 
 
 #_ MISC _________________________________________#
