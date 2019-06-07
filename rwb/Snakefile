@@ -39,11 +39,6 @@ NULLTSTAT = expand(nulltstat_directory+"/NullTCounter_{contrast}.csv", contrast 
 T2P = expand(pval_directory+"/corrPvals_{contrast}.zarr", contrast = CONTRASTS)
 
 
-FINISHED_RANDOMISE = [fname.split('/')[-1] for fname in glob.glob('%s/*'%randomise_directory)]
-FINISHED_TEMP = [fname.split('/')[-1] for fname in glob.glob('%s/*'%temp_directory)]
-DELETE_RANDOMISE = [randomise_directory+"/"+fname+"_deleted" for fname in FINISHED_RANDOMISE]
-DELETE_TEMP = [temp_directory+fname+"_deleted" for fname in FINISHED_TEMP]
-
 
 #-------------------------------------------------------------------------------
 # Rules
@@ -86,7 +81,7 @@ rule randomise:
             docker exec Randomise_{wildcards.sample} /bin/bash -c ". /home/startup.sh && ${{run_randomise}}"
 
             # Permutation processing:
-            docker exec Randomise_{wildcards.sample} python /code/processPermutations.py {temp_directory}/{wildcards.sample}/${{nii}} {ncontrasts}
+            docker exec Randomise_{wildcards.sample} python /code/processPermutations.py {temp_directory}/{wildcards.sample}/${{nii}} {ncontrasts};
             echo 
 
             mv "{temp_directory}/{wildcards.sample}/${{nii}}" "{temp_directory}/{wildcards.sample}/${{nii}}_done"
@@ -120,8 +115,6 @@ rule mergeTstats:
         docker exec mergeTstats_{wildcards.contrast} python /code/mergeTstats.py /data/ /output/ {wildcards.contrast};
 
         docker stop mergeTstats_{wildcards.contrast};
-
-        chmod 755 -R {tstat_directory};
         """
 
 
@@ -143,9 +136,6 @@ rule mergeNullTstats:
         docker exec mergeNullTstats_{wildcards.contrast} python /code/mergeNullTstats.py /data/ /output/ {wildcards.contrast};
 
         docker stop mergeNullTstats_{wildcards.contrast};
-
-        chmod 755 -R {nulltstat_directory};
-
         """
 
 
@@ -159,39 +149,32 @@ rule T2Pvals:
     shell:
         """
         # Create pval_directory:
-        mkdir -p {pval_directory} && chmod 777 -R {pval_directory}
+        mkdir -p {pval_directory} && chmod 777 -R {pval_directory};
 
         # T2Pvals: tstatout, nulltstat_directory, pval_directory, contrast
-        python {model_directory}/T2Pvals.py {tstat_directory} {nulltstat_directory} {pval_directory} {wildcards.contrast}
-
-        chmod 755 -R {pval_directory}
+        python {model_directory}/T2Pvals.py {tstat_directory} {nulltstat_directory} {pval_directory} {wildcards.contrast};
         """
-
-
-
 
 
 # DELETE RANDOMISE OUTPUT:
 rule deleterandomise:
-    input: DELETE_RANDOMISE
-    shell:
-        """
-        rm {randomise_directory}/*_deleted
-        echo "*Fin*";
-        """
-
-# DELETE RANDOMISE OUTPUT:
-rule deletedeletedelete:
     input:  randout= randomise_directory+"/{sample}",
-            tmpout= temp_directory+"/{sample}"
-    output: randomise_directory+"/{sample}_deleted"
+    output: randomise_directory+"/deleted" # Rules w/o output run everytime
     shell:
         """
         rm -r {input[randout]};
-        rm -r {input[tmpout]};
         touch {output}
         """
 
+# DELETE tstat OUTPUT:
+rule deleterandomise:
+    input:  tstatout= tstat_directory+"/{sample}",
+    output: tstat_directory+"/deleted" # Rules w/o output run everytime
+    shell:
+        """
+        rm -r {input[tstatout]};
+        touch {output}
+        """
 
 # TODO: create slurm job config file to specify ntasks=1,c=1, manually override for larger jobs
 
