@@ -159,7 +159,7 @@ rule T2Pvals:
 # DELETE RANDOMISE OUTPUT:
 rule deleterandomise:
     input:  randout= randomise_directory+"/{sample}",
-    output: randomise_directory+"/deleted" # Rules w/o output run everytime
+    output: randomise_directory+"/deleted_{sample}" # Rules w/o output run everytime
     shell:
         """
         rm -r {input[randout]};
@@ -167,9 +167,9 @@ rule deleterandomise:
         """
 
 # DELETE tstat OUTPUT:
-rule deleterandomise:
+rule deletetstat:
     input:  tstatout= tstat_directory+"/{sample}",
-    output: tstat_directory+"/deleted" # Rules w/o output run everytime
+    output: tstat_directory+"/deleted_{sample}" # Rules w/o output run everytime
     shell:
         """
         rm -r {input[tstatout]};
