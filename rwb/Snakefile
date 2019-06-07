@@ -46,7 +46,7 @@ T2P = expand(pval_directory+"/corrPvals_{contrast}.zarr", contrast = CONTRASTS)
 localrules: all, T2Pvals
 
 rule all:
-    input: T2P
+    input: RANDOMISE[0:224] #T2P
     shell:
         """
         echo "Finito";
@@ -99,7 +99,7 @@ rule randomise:
 # Merges Test tstat files from {randomise_directory}: Starts Container=neuroimaging_mergeTstats
 # sample: rowSlice
 rule mergeTstats:
-    input:  randout= RANDOMISE[0:10],
+    input:  randout= RANDOMISE,
     output: tstatout= tstat_directory+"/TestTval_{contrast}.zarr" # TSTAT
     shell:
         """
@@ -119,7 +119,7 @@ rule mergeTstats:
 
 # Merges Null-Distribution tstat files across chunks: Starts Container=mergeNullTstats
 rule mergeNullTstats:
-    input:  RANDOMISE[0:10]
+    input:  RANDOMISE
     output: nulltstatout= nulltstat_directory+"/NullTCounter_{contrast}.csv" # NULLTSTAT
     shell:
         """
