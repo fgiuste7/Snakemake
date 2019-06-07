@@ -104,7 +104,6 @@ rule mergeTstats:
     shell:
         """
         mkdir -p {tstat_directory};
-        chmod 777 -R {tstat_directory};
 
         # Docker Container:
         # data -> randout
@@ -112,7 +111,7 @@ rule mergeTstats:
         docker run -t -d --rm -v {randomise_directory}:/data:rw -v {tstat_directory}:/output:rw -v {model_directory}:/code:rw --name mergeTstats_{wildcards.contrast} fgiuste/neuroimaging;
         
         # Tmerge: randout, tstat_directory, contrast
-        docker exec mergeTstats_{wildcards.contrast} python /code/mergeTstats.py /data/ /output/ {wildcards.contrast};
+        docker exec --user `id -u` mergeTstats_{wildcards.contrast} python /code/mergeTstats.py /data/ /output/ {wildcards.contrast};
 
         docker stop mergeTstats_{wildcards.contrast};
         """
@@ -125,7 +124,6 @@ rule mergeNullTstats:
     shell:
         """
         mkdir -p {nulltstat_directory};
-        chmod 777 -R {nulltstat_directory};
 
         # Docker Container:
         # data -> randout
@@ -133,7 +131,7 @@ rule mergeNullTstats:
         docker run -t -d --rm -v {randomise_directory}:/data:rw -v {nulltstat_directory}:/output:rw -v {model_directory}:/code:rw --name mergeNullTstats_{wildcards.contrast} fgiuste/neuroimaging;
         
         # NullTmerge: randout, nulltstat_directory, contrast
-        docker exec mergeNullTstats_{wildcards.contrast} python /code/mergeNullTstats.py /data/ /output/ {wildcards.contrast};
+        docker exec --user `id -u` mergeNullTstats_{wildcards.contrast} python /code/mergeNullTstats.py /data/ /output/ {wildcards.contrast};
 
         docker stop mergeNullTstats_{wildcards.contrast};
         """
@@ -148,12 +146,16 @@ rule T2Pvals:
     shell:
         """
         # Create pval_directory:
-        mkdir -p {pval_directory} && chmod 777 -R {pval_directory};
+        mkdir -p {pval_directory};
 
         # T2Pvals: tstatout, nulltstat_directory, pval_directory, contrast
         python {model_directory}/T2Pvals.py {tstat_directory} {nulltstat_directory} {pval_directory} {wildcards.contrast};
         """
 
+
+#-------------------------------------------------------------------------------
+# Helper Rules
+#-------------------------------------------------------------------------------
 
 # DELETE RANDOMISE OUTPUT:
 rule deleterandomise:
