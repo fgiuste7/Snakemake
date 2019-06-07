@@ -48,7 +48,7 @@ def NullTmerge(contrast, randout, nulltstatout):
         writer = csv.writer(csvfile, delimiter='\t')
         for key, value in counterF.items():
             writer.writerow([key, value])
-    print('Saving: Done!' % (nulltstatout, contrast))
+    print('Saving: Done!')
     return(0)
 
 
