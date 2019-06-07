@@ -108,21 +108,20 @@ rule mergeTstats:
     output: tstatout= tstat_directory+"/TestTval_{contrast}.zarr" # TSTAT
     shell:
         """
-        # Create tstat_directory:
-        mkdir -p {tstat_directory} && chmod 777 -R {tstat_directory}
+        mkdir -p {tstat_directory};
+        chmod 777 -R {tstat_directory};
 
         # Docker Container:
         # data -> randout
         # output -> tstat_directory
-        docker run -t -d --rm -v {randomise_directory}:/data:rw -v {tstat_directory}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_mergeTstats fgiuste/neuroimaging;
+        docker run -t -d --rm -v {randomise_directory}:/data:rw -v {tstat_directory}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_mergeTstats_{wildcards.contrast} fgiuste/neuroimaging;
         
-        # Permutation processing: randout, tstatout, ncontrasts
-        docker exec neuroimaging_mergeTstats python /code/mergeTstats.py /data/ /output/ {wildcards.contrast}
+        # Tmerge: randout, tstat_directory, contrast
+        docker exec neuroimaging_mergeTstats python /code/mergeTstats.py /data/ /output/ {wildcards.contrast};
 
-        # Shut down Container:
-        docker stop neuroimaging_mergeTstats
+        docker stop neuroimaging_mergeTstats;
 
-        chmod 755 -R {tstat_directory}
+        chmod 755 -R {tstat_directory};
         """
 
 
@@ -132,21 +131,20 @@ rule mergeNullTstats:
     output: nulltstatout= nulltstat_directory+"/NullTCounter_{contrast}.csv" # NULLTSTAT
     shell:
         """
-        # Create nulltstat_directory:
-        mkdir -p {nulltstat_directory} && chmod 777 -R {nulltstat_directory}
+        mkdir -p {nulltstat_directory};
+        chmod 777 -R {nulltstat_directory};
 
         # Docker Container:
         # data -> randout
         # output -> nulltstat_directory
-        docker run -t -d --rm -v {randomise_directory}:/data:rw -v {nulltstat_directory}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_mergeNullTstats fgiuste/neuroimaging;
+        docker run -t -d --rm -v {randomise_directory}:/data:rw -v {nulltstat_directory}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_mergeNullTstats_{wildcards.contrast} fgiuste/neuroimaging;
         
-        # NullTmerge: randout, nulltstat_directory, ncontrasts
-        docker exec neuroimaging_mergeNullTstats python /code/mergeNullTstats.py /data/ /output/ {wildcards.contrast}
+        # NullTmerge: randout, nulltstat_directory, contrast
+        docker exec neuroimaging_mergeNullTstats python /code/mergeNullTstats.py /data/ /output/ {wildcards.contrast};
 
-        # Shut down Container:
-        docker stop neuroimaging_mergeNullTstats
+        docker stop neuroimaging_mergeNullTstats;
 
-        chmod 755 -R {nulltstat_directory}
+        chmod 755 -R {nulltstat_directory};
 
         """
 
@@ -163,7 +161,7 @@ rule T2Pvals:
         # Create pval_directory:
         mkdir -p {pval_directory} && chmod 777 -R {pval_directory}
 
-        # T2Pvals: tstatout, pval_directory, ncontrasts
+        # T2Pvals: tstatout, nulltstat_directory, pval_directory, contrast
         python {model_directory}/T2Pvals.py {tstat_directory} {nulltstat_directory} {pval_directory} {wildcards.contrast}
 
         chmod 755 -R {pval_directory}

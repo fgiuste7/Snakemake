@@ -55,7 +55,7 @@ def mergeTstats(randout, tstatout, contrast):
     print('Contrast %s Final Shape: %s' % (contrast, shape))
     
     # create zarr file to output final matrix (2D)
-    testTvals= zarr.zeros(store= zarrf, shape= shape, chunks=(100,100))
+    testTvals= zarr.zeros(store= zarrf, shape= shape, chunks=(128,128))
     
     # loop through dictionary of input files to assign final values to testT:
     # i: tstat filename
