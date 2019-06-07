@@ -46,7 +46,7 @@ T2P = expand(pval_directory+"/corrPvals_{contrast}.zarr", contrast = CONTRASTS)
 localrules: all, T2Pvals
 
 rule all:
-    input: NULLTSTAT #T2P
+    input: T2P
     shell:
         """
         echo "Finito";
