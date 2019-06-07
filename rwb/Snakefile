@@ -67,7 +67,7 @@ rule randomise:
     shell:
         """
         # Docker Container:
-        docker run -t -d --rm -v {temp_directory}:{temp_directory}:rw -v {input[niftidir]}:/data:rw -v {model_directory}:/code:rw --name neuroimaging_{wildcards.sample} fgiuste/neuroimaging;
+        docker run -t -d --rm -v {temp_directory}:{temp_directory}:rw -v {input[niftidir]}:/data:rw -v {model_directory}:/code:rw --name Randomise_{wildcards.sample} fgiuste/neuroimaging;
         
         chunklist=`ls {input[niftidir]} | sed s/.nii.gz//`
         for nii in $chunklist
@@ -83,17 +83,17 @@ rule randomise:
 
             # Randomise on Chunk within Container:
             run_randomise="randomise -i /data/${{nii}}.nii.gz -o {temp_directory}/{wildcards.sample}/${{nii}}/${{nii}} -d /code/{design_matrix} -t /code/{contrast_matrix} -n {npermutations} -R -N -x --permout";
-            docker exec neuroimaging_{wildcards.sample} /bin/bash -c ". /home/startup.sh && ${{run_randomise}}"
+            docker exec Randomise_{wildcards.sample} /bin/bash -c ". /home/startup.sh && ${{run_randomise}}"
 
             # Permutation processing:
-            docker exec neuroimaging_{wildcards.sample} python /code/processPermutations.py {temp_directory}/{wildcards.sample}/${{nii}} {ncontrasts}
+            docker exec Randomise_{wildcards.sample} python /code/processPermutations.py {temp_directory}/{wildcards.sample}/${{nii}} {ncontrasts}
             echo 
 
             mv "{temp_directory}/{wildcards.sample}/${{nii}}" "{temp_directory}/{wildcards.sample}/${{nii}}_done"
         done
 
         # Shut down Container:
-        docker stop neuroimaging_{wildcards.sample}
+        docker stop Randomise_{wildcards.sample}
 
         # Copy final output to randomise_directory/sample_done:
         echo {output}
@@ -114,12 +114,12 @@ rule mergeTstats:
         # Docker Container:
         # data -> randout
         # output -> tstat_directory
-        docker run -t -d --rm -v {randomise_directory}:/data:rw -v {tstat_directory}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_mergeTstats_{wildcards.contrast} fgiuste/neuroimaging;
+        docker run -t -d --rm -v {randomise_directory}:/data:rw -v {tstat_directory}:/output:rw -v {model_directory}:/code:rw --name mergeTstats_{wildcards.contrast} fgiuste/neuroimaging;
         
         # Tmerge: randout, tstat_directory, contrast
-        docker exec neuroimaging_mergeTstats python /code/mergeTstats.py /data/ /output/ {wildcards.contrast};
+        docker exec mergeTstats_{wildcards.contrast} python /code/mergeTstats.py /data/ /output/ {wildcards.contrast};
 
-        docker stop neuroimaging_mergeTstats;
+        docker stop mergeTstats_{wildcards.contrast};
 
         chmod 755 -R {tstat_directory};
         """
@@ -137,12 +137,12 @@ rule mergeNullTstats:
         # Docker Container:
         # data -> randout
         # output -> nulltstat_directory
-        docker run -t -d --rm -v {randomise_directory}:/data:rw -v {nulltstat_directory}:/output:rw -v {model_directory}:/code:rw --name neuroimaging_mergeNullTstats_{wildcards.contrast} fgiuste/neuroimaging;
+        docker run -t -d --rm -v {randomise_directory}:/data:rw -v {nulltstat_directory}:/output:rw -v {model_directory}:/code:rw --name mergeNullTstats_{wildcards.contrast} fgiuste/neuroimaging;
         
         # NullTmerge: randout, nulltstat_directory, contrast
-        docker exec neuroimaging_mergeNullTstats python /code/mergeNullTstats.py /data/ /output/ {wildcards.contrast};
+        docker exec mergeNullTstats_{wildcards.contrast} python /code/mergeNullTstats.py /data/ /output/ {wildcards.contrast};
 
-        docker stop neuroimaging_mergeNullTstats;
+        docker stop mergeNullTstats_{wildcards.contrast};
 
         chmod 755 -R {nulltstat_directory};
 
