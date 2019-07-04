@@ -16,6 +16,8 @@ salt 'SM*' cmd.run 'sudo cp /home/fgiuste/Slurm/munge.key /etc/munge/munge.key'
 sudo rm /home/fgiuste/Slurm
 
 #_ SLURM Setup _________________________________________#
+# Install SLURM on controller:
+sudo apt install slurm-wlm
 # Install SLURM on nodes:
 salt 'SM*' cmd.run 'apt install slurm-wlm -y'
 # Obtain compute node specs (decrease memory for OS use):
@@ -24,9 +26,9 @@ sudo salt 'SM*' cmd.run 'slurmd -C'
 firefox /usr/share/doc/slurmctld/slurm-wlm-configurator.easy.html
 # Copy slurm.conf to home for node access:
 vim ~/Slurm/slurm.conf
-# Copy slurm.conf to final location (master)
+# Copy slurm.conf to final location (master/Controller)
 sudo cp slurm.conf /etc/slurm-llnl/slurm.conf
-# Copy slurm.conf to final location (nodes)
+# Copy slurm.conf to final location (nodes/Compute)
 sudo salt 'SM*' cmd.run 'sudo cp /home/fgiuste/Slurm/slurm.conf /etc/slurm-llnl/slurm.conf'
 
 
