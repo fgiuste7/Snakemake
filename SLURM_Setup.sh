@@ -27,16 +27,11 @@ firefox /usr/share/doc/slurmctld/slurm-wlm-configurator.easy.html
 # Copy slurm.conf to home for node access:
 #vim ~/Slurm/slurm.conf
 sudo cp slurm.conf /home/fgiuste/Slurm/slurm.conf
-sudo cp cgroup.conf /home/fgiuste/Slurm/cgroup.conf
 
 # Copy slurm.conf to final location (master/Controller)
 sudo cp slurm.conf /etc/slurm-llnl/slurm.conf
-# Copy cgroup.conf to final location (master/Controller)
-sudo cp cgroup.conf /etc/slurm-llnl/cgroup.conf
 # Copy slurm.conf to final location (nodes/Compute)
 sudo salt '*' cmd.run 'sudo cp /home/fgiuste/Slurm/slurm.conf /etc/slurm-llnl/slurm.conf'
-# Copy slurm.conf to final location (nodes/Compute)
-sudo salt '*' cmd.run 'sudo cp /home/fgiuste/Slurm/cgroup.conf /etc/slurm-llnl/cgroup.conf'
 
 
 # Start munge:
