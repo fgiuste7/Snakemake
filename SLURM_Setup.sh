@@ -29,7 +29,7 @@ firefox /usr/share/doc/slurmctld/slurm-wlm-configurator.easy.html
 sudo cp slurm.conf /home/fgiuste/Slurm/slurm.conf
 
 # Copy slurm.conf to final location (master/Controller)
-sudo cp slurm.conf /etc/slurm-llnl/slurm.conf
+sudo cp /home/fgiuste/Slurm/slurm.conf /etc/slurm-llnl/slurm.conf
 # Copy slurm.conf to final location (nodes/Compute)
 sudo salt '*' cmd.run 'sudo cp /home/fgiuste/Slurm/slurm.conf /etc/slurm-llnl/slurm.conf'
 
