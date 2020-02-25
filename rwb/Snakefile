@@ -8,8 +8,11 @@ import glob, os
 #-------------------------------------------------------------------------------
 # Constants
 #-------------------------------------------------------------------------------
-base_directory= "/mnt/gv0/"
-nifti_directory= base_directory+"/FoxNiftis/"
+#base_directory= "/mnt/gv0/"
+base_directory="/data/RWB/"
+#nifti_directory= base_directory+"/FoxNiftis/"
+nifti_directory= "/nvme/fox_fullRes/nifti/"
+
 temp_directory='/tmp_rwb/' # Output for randomise within Docker mapped onto Node filesystem
 randomise_directory= base_directory+"/randomise" #"/HCP_Data/FG/fox_fullRes/randomise/" 
 tstat_directory= base_directory+"/tstat"
@@ -46,7 +49,7 @@ T2P = expand(pval_directory+"/corrPvals_{contrast}.zarr", contrast = CONTRASTS)
 localrules: all, T2Pvals
 
 rule all:
-    input: RANDOMISE[0:224] #T2P
+    input: RANDOMISE[0:1]
     shell:
         """
         echo "Finito";
@@ -77,7 +80,8 @@ rule randomise:
             mkdir -m777 -p {temp_directory}/{wildcards.sample}/${{nii}};
 
             # Randomise on Chunk within Container:
-            run_randomise="randomise -i /data/${{nii}}.nii.gz -o {temp_directory}/{wildcards.sample}/${{nii}}/${{nii}} -d /code/{design_matrix} -t /code/{contrast_matrix} -n {npermutations} -R -N -x --permout";
+            #run_randomise="randomise -i /data/${{nii}}.nii.gz -o {temp_directory}/{wildcards.sample}/${{nii}}/${{nii}} -d /code/{design_matrix} -t /code/{contrast_matrix} -n {npermutations} -R -N -x --permout";
+            run_randomise="randomise -i /data/${{nii}}.nii.gz -o {temp_directory}/{wildcards.sample}/${{nii}}/${{nii}} -d /code/{design_matrix} -t /code/{contrast_matrix} -n {npermutations} -R -N -x";
             docker exec Randomise_{wildcards.sample} /bin/bash -c ". /home/startup.sh && ${{run_randomise}}"
 
             # Permutation processing:
@@ -153,6 +157,7 @@ rule T2Pvals:
         """
 
 
+
 #-------------------------------------------------------------------------------
 # Helper Rules
 #-------------------------------------------------------------------------------
@@ -181,7 +186,7 @@ rule deletetstat:
 
 # RUN:
 # cp ~/Github/Snakemake/rwb/*.py 
-# snakemake --jobs 500 --cluster "sbatch -p SMIs -J 'rwbSMIs' --ntasks=1 --cpus-per-task=1 --mem=500M"
+# snakemake --jobs 1000 --cluster "sbatch -p All -J 'RWB' --ntasks=1 --cpus-per-task=2 --mem=5000M"
 
 
 
