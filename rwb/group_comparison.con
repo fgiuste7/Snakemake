@@ -1,0 +1,18 @@
+/ContrastName1	tame>aggr 
+/ContrastName2	tame<aggr 
+/ContrastName3	tame>unsel 
+/ContrastName4	tame<unsel 
+/ContrastName5	aggr>unsel 
+/ContrastName6	aggr<unsel 
+/NumWaves	3
+/NumContrasts	6
+/PPheights		1.000000e+00	1.000000e+00	1.000000e+00	1.000000e+00	1.000000e+00	1.000000e+00
+/RequiredEffect		2.103	2.103	2.103	2.103	2.103	2.103
+
+/Matrix
+0.000000e+00 1.000000e+00 -1.000000e+00 
+0.000000e+00 -1.000000e+00 1.000000e+00 
+-1.000000e+00 1.000000e+00 0.000000e+00 
+1.000000e+00 -1.000000e+00 0.000000e+00 
+-1.000000e+00 0.000000e+00 1.000000e+00 
+1.000000e+00 0.000000e+00 -1.000000e+00 

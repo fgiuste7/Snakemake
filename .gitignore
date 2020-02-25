@@ -1,0 +1,5 @@
+.snakemake/
+rwb/purge.lock
+.ipynb_checkpoints/
+rwb/global.lock
+
